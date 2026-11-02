@@ -1,7 +1,15 @@
-# Lending Ezy — Frontend
+# Lending Ezy — Customer frontend
 
-Customer-facing marketing website, responsive loan calculator, and sandbox borrower journey.
+Next.js customer-facing website and interactive sandbox borrower journey.
 
-**Status:** Work in progress. Illustrations only; no real loan offers or originations.
+## Run locally
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
+```
+Start `lending-ezy-backend` on port 8000. Default frontend URL: http://localhost:3000.
 
-Stack: Next.js, TypeScript, React. The lending engine is maintained separately in `lending-ezy-backend`.
+Routes: `/` marketing/calculator; `/apply` sandbox loan request; `/dashboard` demonstration overview; `/partner` partner information.
+
+**No real credit services are offered.** Do not enter personal data; calculations are non-binding illustrations.
