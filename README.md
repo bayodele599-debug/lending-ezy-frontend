@@ -10,6 +10,6 @@ npm run dev
 ```
 Start `lending-ezy-backend` on port 8000. Default frontend URL: http://localhost:3000.
 
-Routes: `/` marketing/calculator; `/apply` sandbox loan request; `/dashboard` demonstration overview; `/partner` partner information.
+Early access enquiries: route `/join`; requires `NEXT_PUBLIC_INQUIRIES_ENABLED=true` and a configured API server. When disabled, the form remains in preview mode.\n\nRoutes: `/` marketing/calculator; `/apply` sandbox loan request; `/dashboard` demonstration overview; `/partner` partner information.
 
 **No real credit services are offered.** Do not enter personal data; calculations are non-binding illustrations.

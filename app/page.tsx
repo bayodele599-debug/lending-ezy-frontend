@@ -9,7 +9,7 @@ export default function Home(){const reduce=useReducedMotion();return <main>
  <motion.div className="hero-kicker" initial={reduce?false:{opacity:0,y:15}} animate={{opacity:1,y:0}}> <span className="pulse"/> THE NEXT ERA OF LENDING TECHNOLOGY</motion.div>
  <motion.h1 initial={reduce?false:{opacity:0,y:25}} animate={{opacity:1,y:0}} transition={{delay:.1}}>Finance should<br/>move <em>you forward.</em></motion.h1>
  <motion.p initial={reduce?false:{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:.2}}>Discover a clearer way to explore credit — and a better technology foundation for the institutions serving it.</motion.p>
- <div className="hero-buttons"><Link href="/#calculator" className="button button-white">Explore the calculator <ArrowUpRight size={17}/></Link><Link href="/partner" className="button button-outline">For lending partners <ArrowRight size={17}/></Link></div>
+ <div className="hero-buttons"><Link href="/join" className="button button-white">Join early access <ArrowUpRight size={17}/></Link><Link href="/partner" className="button button-outline">For lending partners <ArrowRight size={17}/></Link></div>
  <div className="hero-foot"><span><ShieldCheck size={18}/> Responsible by design</span><span><Globe2 size={18}/> International architecture</span></div>
  </div><motion.div className="hero-visual" initial={reduce?false:{opacity:0,scale:.94,y:25}} animate={{opacity:1,scale:1,y:0}} transition={{duration:.7,delay:.18}} aria-hidden="true">
  <div className="orbital-ring ring-one"/><div className="orbital-ring ring-two"/>
