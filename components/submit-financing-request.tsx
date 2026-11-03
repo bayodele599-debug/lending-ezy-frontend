@@ -17,15 +17,17 @@ export default function SubmitFinancingRequest({plan,onClose}:Props){
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[reference,setReference]=useState("");
  const [token,setToken]=useState("");
  const formRef=useRef<HTMLDivElement>(null);
+ const busyRef=useRef(false);
+ busyRef.current=busy;
  useEffect(()=>{
   setToken(crypto.randomUUID());
   const prev=document.body.style.overflow;
   document.body.style.overflow="hidden";
-  function dismiss(event:KeyboardEvent){if(event.key==="Escape"&&!busy)onClose();}
+  function dismiss(event:KeyboardEvent){if(event.key==="Escape"&&!busyRef.current)onClose();}
   document.addEventListener("keydown",dismiss);
   formRef.current?.focus();
   return()=>{document.body.style.overflow=prev;document.removeEventListener("keydown",dismiss);};
- },[onClose,busy]);
+ },[onClose]);
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   if(!requestIntakeEnabled||!token||busy||!consent||!acknowledged)return;
