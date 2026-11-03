@@ -58,6 +58,23 @@ for (const width of widths) {
       }
       if (metrics.overlays !== 0) failures.push(width + " " + route + " photo credit overlay still present");
       if (route === "/") {
+        const firstImpression = await page.evaluate(() => {
+          const header = document.querySelector(".site-header")?.getBoundingClientRect();
+          const hero = document.querySelector(".hero")?.getBoundingClientRect();
+          const action = document.querySelector(".hero-actions .button")?.getBoundingClientRect();
+          const snapshot = document.querySelector(".hero-snapshot")?.getBoundingClientRect();
+          const portrait = document.querySelector(".hero-portrait-wrap")?.getBoundingClientRect();
+          return {headerWidth:header?.width??0,heroBottom:hero?.bottom??0,
+            actionBottom:action?.bottom??0,snapshotWidth:snapshot?.width??0,
+            portraitWidth:portrait?.width??0};
+        });
+        if (width >= 1280 && (firstImpression.headerWidth > 1070 || firstImpression.heroBottom > 850))
+          failures.push(width + " first impression should fit at a glance: " + JSON.stringify(firstImpression));
+        if (width <= 650 && (firstImpression.headerWidth > width - 24 ||
+            firstImpression.actionBottom > 740 || firstImpression.portraitWidth < 240))
+          failures.push(width + " mobile first impression is crowded: " + JSON.stringify(firstImpression));
+      }
+      if (route === "/") {
         const productOpacity = await page.locator(".product-grid").evaluate(el => Number(getComputedStyle(el).opacity));
         if (productOpacity < .95) failures.push(width + " product selection is invisible before scrolling: opacity " + productOpacity);
         if (width <= 650) {
