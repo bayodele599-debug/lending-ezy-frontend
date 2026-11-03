@@ -1,6 +1,7 @@
 // Responsive browser smoke checks against the built Next.js server.
 // Uses the Playwright installation supplied by .github/workflows/responsive.yml.
 import { chromium } from "playwright";
+import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
 
 const baseURL = process.env.BASE_URL || "http://127.0.0.1:3000";
@@ -56,6 +57,36 @@ for (const width of widths) {
         failures.push(width + " " + route + " header is not sticky: " + metrics.headerPosition);
       }
       if (metrics.overlays !== 0) failures.push(width + " " + route + " photo credit overlay still present");
+      // Structural and navigation checks on every page at every viewport.
+      const structure = await page.evaluate(() => {
+        const h1 = document.querySelectorAll("#main-content h1").length;
+        const title = document.title;
+        const broken = [...document.querySelectorAll('a[href]')].filter(link => {
+          const href = link.getAttribute("href");
+          if (!href || href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("https://")) return false;
+          const url = new URL(href, location.href);
+          const valid = new Set(["/", "/apply", "/dashboard", "/personal", "/business", "/about", "/partner", "/faq", "/how-it-works", "/join", "/privacy", "/terms"]);
+          const routeExists = valid.has(url.pathname);
+          const anchorExists = !url.hash || (url.pathname !== location.pathname) || document.getElementById(decodeURIComponent(url.hash.slice(1))) !== null;
+          return !routeExists || !anchorExists;
+        }).map(link => link.getAttribute("href")).slice(0, 10);
+        return { h1, title, broken };
+      });
+      if (structure.h1 !== 1) failures.push(width + " " + route + " expected one page h1, got " + structure.h1);
+      if (!structure.title?.includes("Lending Ezy")) failures.push(width + " " + route + " missing descriptive page title");
+      if (structure.broken.length) failures.push(width + " " + route + " internal links/anchors invalid: " + structure.broken.join(", "));
+      if ((width === 390 || width === 1440) && ["/", "/apply", "/dashboard", "/join", "/personal", "/business"].includes(route)) {
+        try {
+          const report = await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa"]).analyze();
+          const important = report.violations.filter(v => v.impact === "critical" || v.impact === "serious");
+          if (important.length) failures.push(width + " " + route + " accessibility issues: " + JSON.stringify(important.map(v => ({
+            id:v.id,
+            nodes:v.nodes.slice(0,15).map(n => ({selector:n.target.join(" "),summary:n.failureSummary?.slice(0,220)}))
+          }))));
+        } catch (e) {
+          failures.push(width + " " + route + " accessibility audit failed: " + String(e));
+        }
+      }
 
       if (["/", "/personal", "/business"].includes(route)) {
         await page.evaluate(() => window.scrollTo(0, 640));
@@ -91,14 +122,62 @@ for (const width of widths) {
   if (width === 390 || width === 1440) {
     currentRoute = "/apply → /dashboard customer journey";
     try {
+      await page.goto(baseURL + "/", {waitUntil:"domcontentloaded"});
+      const amountInput=page.getByLabel("Amount (USD)");
+      await amountInput.fill("1000000");
+      if (await page.locator(".amount-range").getAttribute("max") !== "10000000")
+        throw new Error("Large amount input and slider range are inconsistent");
+      const deepLink=await page.getByRole("link",{name:"Save as plan"}).getAttribute("href");
+      if (!deepLink?.includes("amount=1000000")) throw new Error("Calculator lost the larger amount in its deep link");
+      await page.goto(baseURL + "/business", { waitUntil: "domcontentloaded" });
+      const productSelection = page.getByRole("group", {name:"Borrowing purpose"});
+      if (await productSelection.getByRole("button", {name:"Business"}).getAttribute("aria-pressed") !== "true")
+        throw new Error("Business page calculator did not default to business");
+      const calculatorAmount = await page.getByLabel("Amount (USD)").inputValue();
+      if (calculatorAmount !== "60000") throw new Error("Business calculator amount was not 60000: "+calculatorAmount);
+      await page.getByRole("button", {name:"Reset"}).click();
+      if (await page.getByLabel("Amount (USD)").inputValue() !== "60000") throw new Error("Business calculator reset to personal figures");
       await page.goto(baseURL + "/apply?type=business&currency=GBP&amount=45000&months=36&rate=8", { waitUntil: "domcontentloaded" });
+      // US is the starting country; an existing saved plan remains authoritative when editing.
+      const defaultCountry = await page.getByLabel("Country or region").inputValue();
+      if (defaultCountry !== "US") throw new Error("Country should start as United States, got: " + defaultCountry);
       await page.getByLabel("Country or region").selectOption("GB");
       await page.getByRole("button", { name: "Continue" }).click();
       await page.getByLabel("Financing amount (GBP)").waitFor();
+      const firstStepPosition = await page.evaluate(() => ({
+        scrollY: window.scrollY,
+        headingTop: document.querySelector(".planner-panel h2")?.getBoundingClientRect().top ?? -1,
+        headerBottom: document.querySelector(".site-header")?.getBoundingClientRect().bottom ?? 0,
+        viewportHeight: window.innerHeight,
+        focusedHeading: document.activeElement === document.querySelector(".planner-panel h2")
+      }));
+      if (!firstStepPosition.focusedHeading) throw new Error("Next step heading is not keyboard-focused");
+      if (firstStepPosition.scrollY < 40 || firstStepPosition.headingTop < firstStepPosition.headerBottom - 3 ||
+          firstStepPosition.headingTop > firstStepPosition.viewportHeight - 70) {
+        throw new Error("Next step is outside visible form area: " + JSON.stringify(firstStepPosition));
+      }
+      const firstAxe=await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa"]).analyze();
+      const firstAxeIssues=firstAxe.violations.filter(v=>["serious","critical"].includes(v.impact||""));
+      if(firstAxeIssues.length)failures.push(width+" /apply step 2 accessibility: "+JSON.stringify(firstAxeIssues.map(v=>({id:v.id,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary?.slice(0,170)}))}))));
       const actualAmount = await page.getByLabel("Financing amount (GBP)").inputValue();
       const actualRate = await page.getByLabel("Assumed annual interest rate (%)").inputValue();
       if (actualAmount !== "45000" || actualRate !== "8") throw new Error("Calculator deep link did not populate the planner");
+      await page.getByRole("button", { name: "Back" }).click();
+      if (await page.getByLabel("Country or region").inputValue() !== "GB") throw new Error("Back erased selected country");
       await page.getByRole("button", { name: "Continue" }).click();
+      await page.getByRole("button", { name: "Continue" }).click();
+      const secondPosition = await page.evaluate(() => ({
+        scrollY: window.scrollY,
+        headingTop: document.querySelector(".planner-panel h2")?.getBoundingClientRect().top ?? -1,
+        headerBottom: document.querySelector(".site-header")?.getBoundingClientRect().bottom ?? 0,
+        focusedHeading: document.activeElement === document.querySelector(".planner-panel h2")
+      }));
+      if (!secondPosition.focusedHeading || secondPosition.scrollY < 40 ||
+          secondPosition.headingTop < secondPosition.headerBottom - 3)
+        throw new Error("Review step lost form position: " + JSON.stringify(secondPosition));
+      const reviewAxe=await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa"]).analyze();
+      const reviewAxeIssues=reviewAxe.violations.filter(v=>["serious","critical"].includes(v.impact||""));
+      if(reviewAxeIssues.length)failures.push(width+" /apply review accessibility: "+JSON.stringify(reviewAxeIssues.map(v=>({id:v.id,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary?.slice(0,170)}))}))));
       if (!await page.getByText("This saves a private financial estimate", { exact: false }).isVisible()) {
         throw new Error("Plan review disclosure is missing");
       }
@@ -122,7 +201,7 @@ for (const width of widths) {
       await page.getByRole("link", { name: "Edit plan" }).click();
       await page.getByLabel("Country or region").waitFor();
       if (await page.getByLabel("Country or region").inputValue() !== "GB") throw new Error("Edit did not load saved plan");
-      console.log("PASS " + width + "px customer planning journey | save/reload/download/duplicate/compare/delete/edit");
+      console.log("PASS " + width + "px customer journey | country/edit/scroll/save/reload/download/duplicate/compare/delete");
     } catch (error) {
       failures.push(width + " customer journey " + String(error));
     }

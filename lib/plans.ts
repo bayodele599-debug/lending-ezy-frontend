@@ -33,7 +33,7 @@ export const businessPurposes = ["Working capital", "Equipment", "Expansion", "I
 export const defaultPlan: PlanInput = {
   type: "personal",
   purpose: "Home & living",
-  country: "",
+  country: "US",
   currency: "USD",
   amount: 12000,
   months: 24,

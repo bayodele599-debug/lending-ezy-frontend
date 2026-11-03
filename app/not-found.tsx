@@ -1,0 +1,3 @@
+import Link from "next/link";
+import {ArrowUpRight,House} from "lucide-react";
+export default function NotFound(){return <main id="main-content" className="site-system-page"><div className="container"><p className="overline">404 / Page not found</p><h1>A different path <em>from here.</em></h1><p>We couldn’t find the page you requested. You can return to the homepage or continue with your financing plan.</p><div className="site-system-actions"><Link href="/" className="button button-primary"><House size={17}/> Go to homepage</Link><Link href="/apply" className="inline-link">Build a plan <ArrowUpRight size={17}/></Link></div></div></main>}

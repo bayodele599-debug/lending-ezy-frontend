@@ -15,7 +15,7 @@ export default function Join() {
   const [kind, setKind] = useState<Kind>("borrower");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState("US");
   const [institution, setInstitution] = useState("");
   const [interest, setInterest] = useState("personal");
   const [message, setMessage] = useState("");
@@ -31,13 +31,14 @@ export default function Join() {
     setBusy(true); setError("");
     try {
       const turnstile_token = siteKey ? document.querySelector<HTMLInputElement>('input[name="cf-turnstile-response"]')?.value : undefined;
+      if (siteKey && !turnstile_token) throw new Error("Complete the verification check before submitting.");
       const result = await postJSON<{ received: boolean; reference?: string }>("/api/v1/inquiries", {
         kind, name, email, country, institution: kind === "partner" ? institution : undefined,
         product_interest: kind === "borrower" ? interest : undefined,
         message: message.trim() || undefined, consent_to_contact: consent, website, turnstile_token
       });
-      if (result.received) setReference(result.reference || "received");
-      else setError("Your message could not be recorded. Please try again.");
+      if (result.received && result.reference) setReference(result.reference);
+      else throw new Error("We could not confirm receipt of your message. Please retry.");
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "We couldn't send your message. Please try again.");
     } finally { setBusy(false); }
@@ -61,7 +62,7 @@ export default function Join() {
           {!enabled && <div className="service-notice"><Info size={20}/><div><p>Direct enquiries are currently closed. You can still build, save and compare your financing plans.</p><Link href="/apply" className="inline-link">Start a plan <ArrowUpRight size={17}/></Link></div></div>}
           {enabled && <form className="contact-form" onSubmit={submit}>
             <div className="form-row"><label className="form-field"><span>Full name *</span><input required minLength={2} maxLength={120} autoComplete="name" value={name} onChange={event => setName(event.target.value)} placeholder="Your full name"/></label><label className="form-field"><span>Email address *</span><input required type="email" maxLength={254} autoComplete="email" value={email} onChange={event => setEmail(event.target.value)} placeholder="you@example.com"/></label></div>
-            <label className="form-field"><span>Country or region *</span><select required value={country} onChange={event => setCountry(event.target.value)}><option value="">Select where you live or operate</option>{countries.map(item => <option key={item.code} value={item.code}>{item.label}</option>)}</select></label>
+            <label className="form-field"><span>Country or region *</span><select required value={country} onChange={event => setCountry(event.target.value)}><option value="" disabled>Select where you live or operate</option>{countries.map(item => <option key={item.code} value={item.code}>{item.label}</option>)}</select></label>
             {kind === "partner" ? <label className="form-field"><span>Institution or business name *</span><input required minLength={2} maxLength={150} value={institution} onChange={event => setInstitution(event.target.value)} placeholder="Your organisation"/></label> :
               <label className="form-field"><span>What are you interested in?</span><select value={interest} onChange={event => setInterest(event.target.value)}><option value="personal">Personal borrowing</option><option value="business">Business borrowing</option><option value="salary_advance">Salary advance</option><option value="other">Something else</option></select></label>}
             <label className="form-field"><span>Your message (optional)</span><textarea rows={4} maxLength={1500} value={message} onChange={event => setMessage(event.target.value)} placeholder={kind === "partner" ? "Tell us about your organisation and what you're looking for." : "Tell us what you'd like to know. Please don't include financial account details."}/></label>
