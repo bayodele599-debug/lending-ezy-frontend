@@ -1,12 +1,13 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import useStableReducedMotion from "../lib/use-stable-reduced-motion";
 
 type Props = { children: ReactNode; className?: string; delay?: number };
 
 export default function Reveal({ children, className, delay = 0 }: Props) {
-  const reducedMotion = useReducedMotion() === true;
+  const reducedMotion = useStableReducedMotion();
   return (
     <motion.div
       className={className}

@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import useStableReducedMotion from "../lib/use-stable-reduced-motion";
 
 type Props = {
   src: string;
@@ -16,7 +17,7 @@ type Props = {
 export default function PhotoFrame({
   src, alt, className = "", sizes = "(max-width: 900px) 100vw, 50vw", priority = false
 }: Props) {
-  const reducedMotion = useReducedMotion() === true;
+  const reducedMotion = useStableReducedMotion();
   // Image credits and licence references are maintained in README.md.
   // The image is intentionally free of visual labels and clickable overlays.
   return (

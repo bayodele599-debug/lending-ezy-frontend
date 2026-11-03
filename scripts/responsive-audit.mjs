@@ -20,8 +20,10 @@ for (const width of widths) {
     reducedMotion: "reduce"
   });
   const page = await context.newPage();
-  page.on("pageerror", error => failures.push(width + " JavaScript error: " + error.message));
+  let currentRoute = "/";
+  page.on("pageerror", error => failures.push(width + " " + currentRoute + " JavaScript error: " + error.message));
   for (const route of routes) {
+    currentRoute = route;
     try {
       await page.goto(baseURL + route, { waitUntil: "domcontentloaded", timeout: 35000 });
       await page.locator("#main-content").waitFor({ timeout: 12000 });
