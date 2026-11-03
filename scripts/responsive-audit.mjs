@@ -90,10 +90,14 @@ for (const width of widths) {
 
       if (["/", "/personal", "/business"].includes(route)) {
         await page.evaluate(() => window.scrollTo(0, 640));
-        await page.waitForTimeout(65);
-        const top = await page.locator(".site-header").evaluate(el => el.getBoundingClientRect().top);
+        await page.waitForTimeout(100);
+        const headerAtScroll = await page.locator(".site-header").evaluate(el => ({
+          top: el.getBoundingClientRect().top,
+          compact: el.classList.contains("is-scrolled")
+        }));
         const expected = width <= 650 ? 10 : 14;
-        if (Math.abs(top - expected) > 2) failures.push(width + " " + route + " header did not remain at sticky top: " + top);
+        if (Math.abs(headerAtScroll.top - expected) > 2) failures.push(width + " " + route + " header did not remain at sticky top: " + headerAtScroll.top);
+        if (!headerAtScroll.compact) failures.push(width + " " + route + " glass header did not adapt to scroll");
       }
 
       if (route === "/" && width <= 900) {
@@ -123,6 +127,18 @@ for (const width of widths) {
     currentRoute = "/apply → /dashboard customer journey";
     try {
       await page.goto(baseURL + "/", {waitUntil:"domcontentloaded"});
+      const heroPreview = page.locator(".hero-snapshot");
+      await heroPreview.waitFor();
+      if (!await page.locator(".hero-portrait img").count()) throw new Error("Photographic hero is missing");
+      const beforeMonthly = await heroPreview.locator(".snapshot-monthly strong").innerText();
+      await page.locator("#hero-preview-amount").focus();
+      await page.keyboard.press("ArrowRight");
+      await page.locator("#hero-preview-term").selectOption("24");
+      const afterMonthly = await heroPreview.locator(".snapshot-monthly strong").innerText();
+      if (beforeMonthly === afterMonthly) throw new Error("Hero preview did not recalculate after user changes");
+      const snapshotHref = await page.getByRole("link", { name: "Continue with this financing estimate" }).getAttribute("href");
+      if (!snapshotHref?.includes("amount=21000") || !snapshotHref?.includes("months=24"))
+        throw new Error("Hero preview deep link does not preserve the chosen scenario: " + snapshotHref);
       const amountInput=page.getByLabel("Amount (USD)");
       await amountInput.fill("1000000");
       if (await page.locator(".amount-range").getAttribute("max") !== "10000000")

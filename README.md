@@ -72,3 +72,17 @@ Saved assumptions remain in the local browser storage on the same device. This i
 When \`NEXT_PUBLIC_FINANCING_REQUESTS_ENABLED=true\`, \`NEXT_PUBLIC_API_URL\` points to the deployed FastAPI backend and the Turnstile site key is configured in production, each saved plan offers **Submit financing request**. The visitor gives contact details, a business name when appropriate, consent and acknowledgement, then sends the plan with an idempotency UUID to \`POST /api/v1/financing-requests\`. Only a confirmed backend response displays a server-issued reference.
 
 The administrator's protected \`/requests\` page displays submissions and their manual case histories when the backend and both applications are connected. Unsumbitted financial scenarios remain in the user's browser. Administrative case triage is separate from binding lending decisions, disbursements, repayments or credit offers.
+
+
+
+## Atelier visual system — November 2026
+
+This design refresh preserves the working FastAPI/Next.js contracts, local planning state and account-free borrowing estimator. It introduces:
+
+- A photographic homepage hero with a real interactive borrowing preview. The preview uses exactly the same amortisation code as the full calculator and passes its assumptions to \`/apply\`; it does not invent trust statistics or loan offers.
+- Context-sensitive glass island navigation that deepens on scroll, illustrated editorial cards with existing attributed photography, refined section composition and premium green/ivory/sage textures.
+- A shared visual treatment for repayment calculator, personal/business pages, financing wizard, My Plans, contact, FAQ, partner pages, and responsive mobile screens.
+- Reduced-motion and reduced-transparency fallbacks. Glass is used for navigation and selected summary surfaces; forms and financial figures remain readable.
+- The Chromium responsive audit checks 132 viewport/route combinations, WCAG accessibility at key widths, sticky navigation, the interactive hero, planner journey, exports, and saved-plan integrity.
+
+Source photography is served from the same external photo sources already documented in this README. No image credits are placed over photography.
