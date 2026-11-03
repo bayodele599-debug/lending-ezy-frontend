@@ -149,6 +149,9 @@ for (const width of widths) {
       const actualAmount = await page.getByLabel("Financing amount (GBP)").inputValue();
       const actualRate = await page.getByLabel("Assumed annual interest rate (%)").inputValue();
       if (actualAmount !== "45000" || actualRate !== "8") throw new Error("Calculator deep link did not populate the planner");
+      await page.getByRole("button", { name: "Back" }).click();
+      if (await page.getByLabel("Country or region").inputValue() !== "GB") throw new Error("Back erased selected country");
+      await page.getByRole("button", { name: "Continue" }).click();
       await page.getByRole("button", { name: "Continue" }).click();
       const secondPosition = await page.evaluate(() => ({
         scrollY: window.scrollY,
@@ -182,8 +185,6 @@ for (const width of widths) {
       await page.getByRole("link", { name: "Edit plan" }).click();
       await page.getByLabel("Country or region").waitFor();
       if (await page.getByLabel("Country or region").inputValue() !== "GB") throw new Error("Edit did not load saved plan");
-      await page.getByRole("button", {name:"Back"}).click();
-      if (await page.getByLabel("Country or region").inputValue() !== "GB") throw new Error("Back erased edited country");
       console.log("PASS " + width + "px customer journey | country/edit/scroll/save/reload/download/duplicate/compare/delete");
     } catch (error) {
       failures.push(width + " customer journey " + String(error));
