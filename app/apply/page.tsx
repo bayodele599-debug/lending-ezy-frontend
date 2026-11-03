@@ -63,7 +63,7 @@ export default function Apply() {
     headingRef.current?.focus({preventScroll: true});
     plannerRef.current?.scrollIntoView({
       block: "start",
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
+      behavior: "auto"
     });
   }, [step, ready]);
 

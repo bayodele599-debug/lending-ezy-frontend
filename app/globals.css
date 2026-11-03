@@ -437,3 +437,7 @@ html{scroll-padding-top:118px}
 
 @media(max-width:650px){.planner-main{scroll-margin-top:92px}}
 .planner-panel h2:focus{outline:none}
+
+
+.result-actions button:disabled{opacity:.5;cursor:not-allowed}
+.calculator-guidance-inline{font-size:12px;color:#63796b}

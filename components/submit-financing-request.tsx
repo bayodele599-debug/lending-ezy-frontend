@@ -18,16 +18,28 @@ export default function SubmitFinancingRequest({plan,onClose}:Props){
  const [token,setToken]=useState("");
  const formRef=useRef<HTMLDivElement>(null);
  const busyRef=useRef(false);
+ const onCloseRef=useRef(onClose);
  busyRef.current=busy;
+ onCloseRef.current=onClose;
  useEffect(()=>{
   setToken(crypto.randomUUID());
   const prev=document.body.style.overflow;
   document.body.style.overflow="hidden";
-  function dismiss(event:KeyboardEvent){if(event.key==="Escape"&&!busyRef.current)onClose();}
+  const previousFocus=document.activeElement instanceof HTMLElement?document.activeElement:null;
+  function dismiss(event:KeyboardEvent){
+   if(event.key==="Escape"&&!busyRef.current){event.preventDefault();onCloseRef.current();return;}
+   if(event.key!=="Tab")return;
+   const nodes=Array.from(formRef.current?.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[tabindex="0"]')||[])
+     .filter(node=>node.getClientRects().length>0);
+   if(!nodes.length){event.preventDefault();return;}
+   const first=nodes[0],last=nodes[nodes.length-1];
+   if(event.shiftKey&&(document.activeElement===first||document.activeElement===formRef.current)){event.preventDefault();last.focus();}
+   else if(!event.shiftKey&&(document.activeElement===last||document.activeElement===formRef.current)){event.preventDefault();first.focus();}
+  }
   document.addEventListener("keydown",dismiss);
   formRef.current?.focus();
-  return()=>{document.body.style.overflow=prev;document.removeEventListener("keydown",dismiss);};
- },[onClose]);
+  return()=>{document.body.style.overflow=prev;document.removeEventListener("keydown",dismiss);previousFocus?.focus({preventScroll:true});};
+ },[]);
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   if(!requestIntakeEnabled||!token||busy||!consent||!acknowledged)return;
