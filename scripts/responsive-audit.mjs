@@ -92,13 +92,37 @@ for (const width of widths) {
     currentRoute = "/apply → /dashboard customer journey";
     try {
       await page.goto(baseURL + "/apply?type=business&currency=GBP&amount=45000&months=36&rate=8", { waitUntil: "domcontentloaded" });
+      // US is the starting country; an existing saved plan remains authoritative when editing.
+      const defaultCountry = await page.getByLabel("Country or region").inputValue();
+      if (defaultCountry !== "US") throw new Error("Country should start as United States, got: " + defaultCountry);
       await page.getByLabel("Country or region").selectOption("GB");
       await page.getByRole("button", { name: "Continue" }).click();
       await page.getByLabel("Financing amount (GBP)").waitFor();
+      const firstStepPosition = await page.evaluate(() => ({
+        scrollY: window.scrollY,
+        headingTop: document.querySelector(".planner-panel h2")?.getBoundingClientRect().top ?? -1,
+        headerBottom: document.querySelector(".site-header")?.getBoundingClientRect().bottom ?? 0,
+        viewportHeight: window.innerHeight,
+        focusedHeading: document.activeElement === document.querySelector(".planner-panel h2")
+      }));
+      if (!firstStepPosition.focusedHeading) throw new Error("Next step heading is not keyboard-focused");
+      if (firstStepPosition.scrollY < 40 || firstStepPosition.headingTop < firstStepPosition.headerBottom - 3 ||
+          firstStepPosition.headingTop > firstStepPosition.viewportHeight - 70) {
+        throw new Error("Next step is outside visible form area: " + JSON.stringify(firstStepPosition));
+      }
       const actualAmount = await page.getByLabel("Financing amount (GBP)").inputValue();
       const actualRate = await page.getByLabel("Assumed annual interest rate (%)").inputValue();
       if (actualAmount !== "45000" || actualRate !== "8") throw new Error("Calculator deep link did not populate the planner");
       await page.getByRole("button", { name: "Continue" }).click();
+      const secondPosition = await page.evaluate(() => ({
+        scrollY: window.scrollY,
+        headingTop: document.querySelector(".planner-panel h2")?.getBoundingClientRect().top ?? -1,
+        headerBottom: document.querySelector(".site-header")?.getBoundingClientRect().bottom ?? 0,
+        focusedHeading: document.activeElement === document.querySelector(".planner-panel h2")
+      }));
+      if (!secondPosition.focusedHeading || secondPosition.scrollY < 40 ||
+          secondPosition.headingTop < secondPosition.headerBottom - 3)
+        throw new Error("Review step lost form position: " + JSON.stringify(secondPosition));
       if (!await page.getByText("This saves a private financial estimate", { exact: false }).isVisible()) {
         throw new Error("Plan review disclosure is missing");
       }

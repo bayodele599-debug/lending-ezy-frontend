@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Info, LockKeyhole, SlidersHorizontal } from "lucide-react";
@@ -16,6 +16,9 @@ const steps = ["Your goals", "The numbers", "Review & save"];
 export default function Apply() {
   const router = useRouter();
   const [step, setStep] = useState(0);
+  const plannerRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const previousStepRef = useRef(0);
   const [plan, setPlan] = useState<PlanInput>(defaultPlan);
   const [editingId, setEditingId] = useState<string>();
   const [error, setError] = useState("");
@@ -52,6 +55,18 @@ export default function Apply() {
     setReady(true);
   }, []);
 
+  // Focus the new step and align the actual form below the persistent island header.
+  // Do not scroll to the top of the entire page: that hides the form beneath the intro.
+  useEffect(() => {
+    if (!ready || previousStepRef.current === step) return;
+    previousStepRef.current = step;
+    headingRef.current?.focus({preventScroll: true});
+    plannerRef.current?.scrollIntoView({
+      block: "start",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
+    });
+  }, [step, ready]);
+
   function update<K extends keyof PlanInput>(key: K, value: PlanInput[K]) {
     setError("");
     setPlan(current => ({...current, [key]: value}));
@@ -76,7 +91,7 @@ export default function Apply() {
     }
     setStep(value => Math.min(value + 1, 2));
     setError("");
-    window.scrollTo({top: 0, behavior: "smooth"});
+
   }
 
   function finish() {
@@ -103,10 +118,10 @@ export default function Apply() {
         <Link href="/dashboard" className="planner-my-plans">My saved plans <ArrowUpRight size={17}/></Link>
       </div>
       <div className="container planner-shell">
-        <section className="planner-main" aria-label="Build your financing plan">
+        <section className="planner-main" ref={plannerRef} aria-label="Build your financing plan">
           <div className="planner-progress" aria-label="Progress">
             {steps.map((label, index) => (
-              <div key={label} className={"planner-progress-step" + (index === step ? " active" : "") + (index < step ? " done" : "")}>
+              <div key={label} className={"planner-progress-step" + (index === step ? " active" : "") + (index < step ? " done" : "")} aria-current={index === step ? "step" : undefined}>
                 <span>{index < step ? <Check size={15}/> : String(index + 1).padStart(2, "0")}</span>
                 <span>{label}</span>
               </div>
@@ -117,7 +132,7 @@ export default function Apply() {
             <>
               {step === 0 && <div className="planner-panel">
                 <p className="overline">01 / Your goals</p>
-                <h2>What are you <em>planning for?</em></h2>
+                <h2 tabIndex={-1} ref={headingRef}>What are you <em>planning for?</em></h2>
                 <p className="planner-helper">Choose a purpose and the country where you would explore financing.</p>
                 <div className="planner-type-grid" role="group" aria-label="Financing type">
                   <button type="button" className={plan.type === "personal" ? "selected" : ""} aria-pressed={plan.type === "personal"} onClick={() => chooseType("personal")}>
@@ -135,7 +150,7 @@ export default function Apply() {
                   </label>
                   <label className="planner-field"><span>Country or region</span>
                     <select value={plan.country} onChange={event => update("country", event.target.value)} required>
-                      <option value="">Choose a country</option>
+                      <option value="" disabled>Choose a country</option>
                       {countries.map(item => <option key={item.code} value={item.code}>{item.label}</option>)}
                     </select>
                   </label>
@@ -143,7 +158,7 @@ export default function Apply() {
               </div>}
               {step === 1 && <div className="planner-panel">
                 <p className="overline">02 / The numbers</p>
-                <h2>Put the numbers <em>in perspective.</em></h2>
+                <h2 tabIndex={-1} ref={headingRef}>Put the numbers <em>in perspective.</em></h2>
                 <p className="planner-helper">Change each figure to see its effect on monthly repayments and total cost.</p>
                 <div className="planner-field-grid">
                   <label className="planner-field"><span>Currency</span>
@@ -164,12 +179,12 @@ export default function Apply() {
                   </label>
                 </div>
                 <div className="planner-range-label"><span>Adjust amount</span><strong>{money(plan.amount || 0, plan.currency)}</strong></div>
-                <input className="planner-range" type="range" min={500} max={250000} step={500} value={Math.min(250000, Math.max(500, plan.amount))} onChange={event => update("amount", Number(event.target.value))}/>
+                <input className="planner-range" type="range" min={500} max={plan.amount > 250000 ? 10000000 : 250000} step={plan.amount > 250000 ? 10000 : 500} aria-label="Adjust financing amount" value={Math.min(plan.amount > 250000 ? 10000000 : 250000, Math.max(500, plan.amount))} onChange={event => update("amount", Number(event.target.value))}/>
                 <div className="planner-interest-note"><Info size={18}/><span>The interest rate is an assumption you control, not a lender's quoted rate. Choosing a currency does not convert exchange rates.</span></div>
               </div>}
               {step === 2 && <div className="planner-panel">
                 <p className="overline">03 / Review & save</p>
-                <h2>A clearer view of <em>your plan.</em></h2>
+                <h2 tabIndex={-1} ref={headingRef}>A clearer view of <em>your plan.</em></h2>
                 <p className="planner-helper">Check the details before saving this plan to your device.</p>
                 <dl className="planner-review">
                   <div><dt>Financing</dt><dd>{plan.type === "personal" ? "Personal" : "Business"} · {plan.purpose}</dd></div>

@@ -220,7 +220,7 @@ html{scroll-padding-top:118px}
 .planner-intro p:not(.overline),.saved-hero p:not(.overline){max-width:590px;color:#66766b;font-size:15px;line-height:1.8;margin:0}
 .planner-my-plans{display:inline-flex;align-items:center;gap:13px;font-size:13px;font-weight:700;color:var(--green);border-bottom:1px solid currentColor;padding-bottom:8px;white-space:nowrap}
 .planner-shell{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(290px,.78fr);gap:26px;align-items:start}
-.planner-main{min-width:0;border:1px solid #d8ded5;background:#fffefa;padding:35px 42px 31px}
+.planner-main{min-width:0;border:1px solid #d8ded5;background:#fffefa;padding:35px 42px 31px;scroll-margin-top:114px}
 .planner-progress{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:1px solid #dce2d8;padding-bottom:25px;gap:10px}
 .planner-progress-step{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:700;white-space:nowrap;color:#8e9990}
 .planner-progress-step>span:first-child{width:30px;height:30px;flex:0 0 30px;border:1px solid #cbd6c9;color:#819287;display:grid;place-items:center;font-size:10px}
@@ -434,3 +434,6 @@ html{scroll-padding-top:118px}
  .request-submit-row button{width:100%}
  .request-success{padding:30px 19px}
 }
+
+@media(max-width:650px){.planner-main{scroll-margin-top:92px}}
+.planner-panel h2:focus{outline:none}
