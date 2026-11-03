@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Check, ChevronRight, CircleHelp, Globe2, MoveUpRight, ShieldCheck } from "lucide-react";
 import RepaymentCalculator from "../components/repayment-calculator";
+import PhotoFrame from "../components/photo-frame";
+import Reveal from "../components/reveal";
 
 const questions = [
   ["Can I apply for a loan through Lending Ezy today?", "Loan applications and funding are not currently available through this website. You can explore repayment examples and register interest in future availability."],
@@ -38,16 +40,16 @@ export default function Home() {
       </section>
 
       <section className="section intro-section">
-        <div className="container intro-layout">
+        <Reveal className="container intro-layout">
           <div><p className="overline">A different starting point</p><h2>Money is personal.<br/><em>So is your next move.</em></h2></div>
           <div className="intro-right"><p>Whether you are planning a milestone, managing an unexpected expense or looking ahead for your business, understanding the numbers should be the easy part.</p><Link href="/about" className="inline-link">Why we are building Lending Ezy <ArrowUpRight size={17}/></Link></div>
-        </div>
+        </Reveal>
       </section>
 
       <section className="section product-section">
         <div className="container">
           <div className="section-heading-row"><div><p className="overline">Find your direction</p><h2>What are you <em>planning?</em></h2></div><p>Explore the possibilities at your own pace. No pressure, no complicated language.</p></div>
-          <div className="product-grid">
+          <Reveal className="product-grid">
             <Link href="/personal" className="product-tile product-tile-personal">
               <div className="tile-top"><span>01 / FOR INDIVIDUALS</span><ArrowUpRight size={25}/></div>
               <div className="tile-art tile-art-personal" aria-hidden="true"><span className="tile-circle"/><span className="tile-cut"/></div>
@@ -58,7 +60,26 @@ export default function Home() {
               <div className="tile-art tile-art-business" aria-hidden="true"><span/><span/><span/></div>
               <div><h3>Business borrowing</h3><p>Plan ahead with clearer figures for your next business decision.</p><span className="tile-link">Explore business borrowing <ArrowRight size={18}/></span></div>
             </Link>
-          </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="photo-story-section" aria-labelledby="photo-story-heading">
+        <div className="container photo-story-grid">
+          <PhotoFrame
+            className="photo-story-frame"
+            src="https://images.unsplash.com/photo-1739303987875-db274ba45b60?auto=format&fit=crop&w=1600&q=82"
+            alt="Two women sharing a cheerful moment across a café table"
+            credit="Ninthgrid"
+            creditHref="https://unsplash.com/photos/AB04SBsdHjY"
+            sizes="(max-width: 900px) 100vw, 58vw"
+          />
+          <Reveal className="photo-story-copy" delay={0.12}>
+            <p className="overline">The human side of money</p>
+            <h2 id="photo-story-heading">Behind every number, <em>there's a story.</em></h2>
+            <p>Life isn't lived in spreadsheets. There are plans to make, people to support and decisions worth thinking through. We're here to make the numbers easier to understand.</p>
+            <Link href="/how-it-works" className="inline-link">Our approach to borrowing <ArrowUpRight size={17}/></Link>
+          </Reveal>
         </div>
       </section>
 
@@ -70,25 +91,25 @@ export default function Home() {
       </section>
 
       <section className="section steps-section">
-        <div className="container steps-layout">
+        <Reveal className="container steps-layout">
           <div className="steps-heading"><p className="overline">A clear way forward</p><h2>One step<br/><em>at a time.</em></h2><p>We believe good financial decisions begin with understanding, not urgency.</p><Link href="/how-it-works" className="inline-link">Read how it works <ArrowUpRight size={17}/></Link></div>
           <div className="steps-list">
             <div><span>01</span><div><h3>Start with your needs</h3><p>Think about what you want to achieve and what repayments would be manageable.</p></div><ChevronRight size={21}/></div>
             <div><span>02</span><div><h3>Explore the figures</h3><p>Use the calculator to understand the relationship between term, rate and total cost.</p></div><ChevronRight size={21}/></div>
             <div><span>03</span><div><h3>Ask about availability</h3><p>Register interest or contact our team. We'll be clear about what is and isn't available.</p></div><ChevronRight size={21}/></div>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <section className="section principles-section">
-        <div className="container principles-layout">
+        <Reveal className="container principles-layout">
           <div><p className="overline">Our principles</p><h2>Trust is built<br/><em>in the details.</em></h2></div>
           <div className="principles-grid">
             <article><span className="principle-icon"><Check size={22}/></span><h3>Clear information</h3><p>Plain language and transparent assumptions, so the figures are easier to understand.</p></article>
             <article><span className="principle-icon"><ShieldCheck size={22}/></span><h3>Responsible by design</h3><p>We won't present a repayment estimate as a guaranteed offer or a credit decision.</p></article>
             <article><span className="principle-icon"><Globe2 size={22}/></span><h3>International perspective</h3><p>Designed to work across borders, while respecting the rules of each market.</p></article>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <section className="section faq-section">
