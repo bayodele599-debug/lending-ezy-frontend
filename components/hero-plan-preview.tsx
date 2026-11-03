@@ -43,7 +43,7 @@ export default function HeroPlanPreview() {
             <span className="hero-snapshot-eyebrow"><SlidersHorizontal size={14}/> A LITTLE PERSPECTIVE</span>
             <h2>Your numbers. <em>Your pace.</em></h2>
           </div>
-          <span className="snapshot-index" aria-hidden="true">01 / 02</span>
+          <span className="snapshot-index" aria-hidden="true">LIVE PREVIEW</span>
         </div>
 
         <label className="snapshot-amount-label" htmlFor="hero-preview-amount">

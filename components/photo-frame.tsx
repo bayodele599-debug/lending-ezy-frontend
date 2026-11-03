@@ -23,7 +23,7 @@ export default function PhotoFrame({
   return (
     <motion.figure
       className={"editorial-photo " + className}
-      initial={reducedMotion ? false : { opacity: 0, y: 20 }}
+      initial={reducedMotion ? false : { opacity: 1, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.12 }}
       transition={{ duration: reducedMotion ? 0 : 0.7, ease: "easeOut" }}

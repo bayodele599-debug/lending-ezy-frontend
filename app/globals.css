@@ -1012,3 +1012,35 @@ body{background:#f8f8f4}
   }
   .principles-grid article{background-color:#294b38!important;color:#fff!important}
 }
+
+
+/* QA refinements: readable inactive calculator labels and a genuinely photographic mobile hero. */
+.segment-control button:not(.selected){color:#435a4a}
+@media(max-width:650px){
+  .hero-composition{
+    display:flex;flex-direction:column;
+    height:auto!important;min-height:0!important;
+    gap:0;margin-top:27px;
+  }
+  .hero-portrait-wrap{
+    position:relative;top:auto;right:auto;
+    width:100%;height:auto;flex:0 0 auto;
+    aspect-ratio:1.15;
+    border-radius:125px 17px 17px 17px;
+  }
+  .hero-snapshot{
+    position:relative;left:auto;bottom:auto;
+    width:calc(100% - 12px);
+    margin:-36px auto 0;
+    flex:0 0 auto;
+  }
+  .hero-composition-foot{
+    position:static;right:auto;bottom:auto;
+    align-self:flex-end;margin-top:17px;
+  }
+}
+@media(max-width:390px){
+  .hero-composition{height:auto!important;min-height:0!important}
+  .hero-portrait-wrap{width:100%;height:auto;aspect-ratio:1.12}
+  .hero-snapshot{width:calc(100% - 8px);padding:18px}
+}

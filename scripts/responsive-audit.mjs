@@ -57,6 +57,21 @@ for (const width of widths) {
         failures.push(width + " " + route + " header is not sticky: " + metrics.headerPosition);
       }
       if (metrics.overlays !== 0) failures.push(width + " " + route + " photo credit overlay still present");
+      if (route === "/") {
+        const productOpacity = await page.locator(".product-grid").evaluate(el => Number(getComputedStyle(el).opacity));
+        if (productOpacity < .95) failures.push(width + " product selection is invisible before scrolling: opacity " + productOpacity);
+        if (width <= 650) {
+          const visualLayout = await page.evaluate(() => {
+            const photo = document.querySelector(".hero-portrait-wrap")?.getBoundingClientRect();
+            const glass = document.querySelector(".hero-snapshot")?.getBoundingClientRect();
+            return photo && glass ? { photoTop: photo.top, photoBottom: photo.bottom, glassTop: glass.top, glassBottom: glass.bottom } : null;
+          });
+          if (!visualLayout || visualLayout.glassTop - visualLayout.photoTop < 180 ||
+              visualLayout.glassTop > visualLayout.photoBottom) {
+            failures.push(width + " hero photo should be visible above glass panel: " + JSON.stringify(visualLayout));
+          }
+        }
+      }
       // Structural and navigation checks on every page at every viewport.
       const structure = await page.evaluate(() => {
         const h1 = document.querySelectorAll("#main-content h1").length;
