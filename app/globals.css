@@ -449,3 +449,25 @@ html{scroll-padding-top:118px}
 .site-system-page p:not(.overline){font-size:15px;color:#657b6b;max-width:550px}
 .site-system-actions{display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-top:32px}
 @media(max-width:650px){.site-system-page{padding:125px 0 80px}}
+
+
+
+/* Accessible editorial contrast: restrained colours, readable labels on ivory and sage. */
+.editorial-bottom span{color:#526457}
+.calculator-label{color:#506b56}
+.range-labels span{color:#52645a}
+.photo-aside-note span{color:#405b4b}
+.information-grid article>span{color:#5d7962}
+.info-note p{color:#4f6255}
+.inner-hero-business .overline{color:#405d4b}
+.contact-side>p:not(.overline):not(.contact-availability){color:#506456}
+.contact-points p{color:#4f6657}
+.contact-card-header>span{color:#49664f}
+.contact-card-header p{color:#516958}
+.planner-intro p:not(.overline),.saved-hero p:not(.overline){color:#506558}
+.planner-progress-step{color:#506657}
+.planner-progress-step>span:first-child{color:#4d6657}
+.planner-type-grid span{color:#4c6254}
+.planner-bottom{color:#4f6655}
+.saved-eyebrow{color:#43624c}
+.saved-filters button{color:#405b4a}

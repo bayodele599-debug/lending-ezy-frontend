@@ -122,6 +122,13 @@ for (const width of widths) {
   if (width === 390 || width === 1440) {
     currentRoute = "/apply → /dashboard customer journey";
     try {
+      await page.goto(baseURL + "/", {waitUntil:"domcontentloaded"});
+      const amountInput=page.getByLabel("Amount (USD)");
+      await amountInput.fill("1000000");
+      if (await page.locator(".amount-range").getAttribute("max") !== "10000000")
+        throw new Error("Large amount input and slider range are inconsistent");
+      const deepLink=await page.getByRole("link",{name:"Save as plan"}).getAttribute("href");
+      if (!deepLink?.includes("amount=1000000")) throw new Error("Calculator lost the larger amount in its deep link");
       await page.goto(baseURL + "/business", { waitUntil: "domcontentloaded" });
       const productSelection = page.getByRole("group", {name:"Borrowing purpose"});
       if (await productSelection.getByRole("button", {name:"Business"}).getAttribute("aria-pressed") !== "true")
@@ -149,6 +156,9 @@ for (const width of widths) {
           firstStepPosition.headingTop > firstStepPosition.viewportHeight - 70) {
         throw new Error("Next step is outside visible form area: " + JSON.stringify(firstStepPosition));
       }
+      const firstAxe=await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa"]).analyze();
+      const firstAxeIssues=firstAxe.violations.filter(v=>["serious","critical"].includes(v.impact||""));
+      if(firstAxeIssues.length)failures.push(width+" /apply step 2 accessibility: "+JSON.stringify(firstAxeIssues.map(v=>({id:v.id,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary?.slice(0,170)}))}))));
       const actualAmount = await page.getByLabel("Financing amount (GBP)").inputValue();
       const actualRate = await page.getByLabel("Assumed annual interest rate (%)").inputValue();
       if (actualAmount !== "45000" || actualRate !== "8") throw new Error("Calculator deep link did not populate the planner");
@@ -165,6 +175,9 @@ for (const width of widths) {
       if (!secondPosition.focusedHeading || secondPosition.scrollY < 40 ||
           secondPosition.headingTop < secondPosition.headerBottom - 3)
         throw new Error("Review step lost form position: " + JSON.stringify(secondPosition));
+      const reviewAxe=await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa"]).analyze();
+      const reviewAxeIssues=reviewAxe.violations.filter(v=>["serious","critical"].includes(v.impact||""));
+      if(reviewAxeIssues.length)failures.push(width+" /apply review accessibility: "+JSON.stringify(reviewAxeIssues.map(v=>({id:v.id,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary?.slice(0,170)}))}))));
       if (!await page.getByText("This saves a private financial estimate", { exact: false }).isVisible()) {
         throw new Error("Plan review disclosure is missing");
       }
