@@ -5,7 +5,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: { default: "Lending Ezy | Borrowing, made clearer", template: "%s | Lending Ezy" },
-  description: "Explore borrowing with clear repayment estimates and straightforward information. Lending Ezy connects people and lending businesses as services become available.",
+  description: "Build personal and business financing plans, explore repayment estimates, compare options and save your scenarios with Lending Ezy.",
   robots: { index: true, follow: true }
 };
 
