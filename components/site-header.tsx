@@ -15,9 +15,17 @@ const links = [
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const headerRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const updateScroll = () => setScrolled(window.scrollY > 28);
+    updateScroll();
+    window.addEventListener("scroll", updateScroll, { passive: true });
+    return () => window.removeEventListener("scroll", updateScroll);
+  }, []);
 
   // An expanded navigation can be dismissed without navigating, and focus returns to its button.
   useEffect(() => {
@@ -42,7 +50,7 @@ export default function SiteHeader() {
   }, [open]);
 
   return (
-    <header className="site-header" ref={headerRef}>
+    <header className={scrolled ? "site-header is-scrolled" : "site-header"} ref={headerRef}>
       <div className="container header-inner">
         <Link href="/" className="brand" aria-label="Lending Ezy home" onClick={() => setOpen(false)}>
           <span className="brand-mark" aria-hidden="true">le<span>.</span></span>
