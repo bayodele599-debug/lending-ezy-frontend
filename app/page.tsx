@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Check, ChevronRight, CircleHelp, Globe2, MoveUpRight, ShieldCheck } from "lucide-react";
 import RepaymentCalculator from "../components/repayment-calculator";
+import HeroPlanPreview from "../components/hero-plan-preview";
 import PhotoFrame from "../components/photo-frame";
 import Reveal from "../components/reveal";
 
@@ -24,17 +25,9 @@ export default function Home() {
               <Link href="/apply" className="button button-cream">Build your plan <ArrowUpRight size={18}/></Link>
               <Link href="/#calculator" className="text-button text-button-light">Explore repayments <ArrowRight size={18}/></Link>
             </div>
-            <p className="hero-disclaimer">A clearer starting point for your next financial decision.</p>
+            <p className="hero-disclaimer">Built around real lives, real choices and the details that matter.</p>
           </div>
-          <div className="hero-editorial" role="group" aria-label="Three principles behind Lending Ezy">
-            <div className="editorial-top"><span>THE LENDING EZY APPROACH</span><span>01 — 03</span></div>
-            <div className="editorial-monogram" aria-hidden="true"><span>le</span><i>.</i></div>
-            <div className="editorial-bottom">
-              <div><span>01</span><p>Know your numbers.</p></div>
-              <div><span>02</span><p>Understand the details.</p></div>
-              <div><span>03</span><p>Decide on your terms.</p></div>
-            </div>
-          </div>
+          <HeroPlanPreview/>
         </div>
         <div className="container hero-baseline"><span>LESS GUESSWORK. MORE CLARITY.</span><span>BUILT FOR THE DECISIONS THAT MATTER <MoveUpRight size={16}/></span></div>
       </section>
@@ -52,12 +45,18 @@ export default function Home() {
           <Reveal className="product-grid">
             <Link href="/apply?type=personal" className="product-tile product-tile-personal">
               <div className="tile-top"><span>01 / FOR INDIVIDUALS</span><ArrowUpRight size={25}/></div>
-              <div className="tile-art tile-art-personal" aria-hidden="true"><span className="tile-circle"/><span className="tile-cut"/></div>
+              <div className="tile-media">
+                <PhotoFrame className="tile-photo" src="https://images.unsplash.com/photo-1739300293091-6e187cdf4b2c?auto=format&fit=crop&w=1200&q=82" alt="A woman working thoughtfully on a laptop" credit="Ninthgrid" creditHref="https://unsplash.com/photos/J-IBERCeDTY" sizes="(max-width: 760px) 94vw, 43vw"/>
+                <span className="tile-media-label">A plan for the moments that matter <ArrowUpRight size={16}/></span>
+              </div>
               <div><h3>Personal borrowing</h3><p>Make sense of repayments for the things that matter to you.</p><span className="tile-link">Start a personal plan <ArrowRight size={18}/></span></div>
             </Link>
             <Link href="/apply?type=business" className="product-tile product-tile-business">
               <div className="tile-top"><span>02 / FOR BUSINESSES</span><ArrowUpRight size={25}/></div>
-              <div className="tile-art tile-art-business" aria-hidden="true"><span/><span/><span/></div>
+              <div className="tile-media">
+                <PhotoFrame className="tile-photo tile-photo-business" src="https://images.unsplash.com/photo-1772442125267-7640b4b5f2fe?auto=format&fit=crop&w=1200&q=82" alt="A small business owner working on jewellery in her studio" credit="GN Group" creditHref="https://unsplash.com/photos/9rdoc89WxP0" sizes="(max-width: 760px) 94vw, 43vw"/>
+                <span className="tile-media-label">Good businesses begin with clear choices <ArrowUpRight size={16}/></span>
+              </div>
               <div><h3>Business borrowing</h3><p>Plan ahead with clearer figures for your next business decision.</p><span className="tile-link">Start a business plan <ArrowRight size={18}/></span></div>
             </Link>
           </Reveal>
