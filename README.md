@@ -53,3 +53,15 @@ The site header is a persistent sticky, frosted-glass island over the page (with
 Automated Next.js production builds verify compilation/type safety. Browser-specific responsive visual checks remain separate and should be completed for a full release QA sign-off.
 
 The contact-page country/region selector uses a committed, stable list of English country labels to avoid server/client locale-data hydration differences.
+
+
+## Customer-facing planning workflow
+
+The public site now has functional customer screens (not placeholder redirects):
+
+- \`/apply\`: guided personal/business financing planner with three steps, country and currency selection, validation, live repayment estimates, edit and save flow.
+- \`/dashboard\`: browser-based planning space with create, edit, duplicate, deletion with confirmation, filters, up to three plans compared, and per-plan CSV download.
+- Calculator-to-planner deep links preserve the selected amount, term, assumed rate, type and currency.
+- \`/join\`: the actual enquiry submission form appears only when the existing backend and bot protection are configured; otherwise the page offers a working plan builder instead of disabled form controls.
+
+Saved assumptions remain in the local browser storage on the same device. This is not an online borrower account. Sensitive documents, identity information, financial account credentials and payment data are intentionally excluded from the planning workflow. Credit origination, approval, disbursement and repayments require regulated backend services; the user interface does not represent saved plans as submitted applications. Appropriate disclosure is provided at review and in the legal pages rather than repeated across the marketing sections.

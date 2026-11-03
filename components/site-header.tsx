@@ -10,7 +10,7 @@ const links = [
   { href: "/business", label: "Business" },
   { href: "/how-it-works", label: "How it works" },
   { href: "/about", label: "About" },
-  { href: "/faq", label: "FAQs" }
+  { href: "/dashboard", label: "My plans" }
 ];
 
 export default function SiteHeader() {
@@ -56,8 +56,8 @@ export default function SiteHeader() {
           ))}
         </nav>
         <div className="header-actions">
-          <Link className="header-cta" href="/join" aria-current={pathname === "/join" ? "page" : undefined} onClick={() => setOpen(false)}>
-            Get in touch <ArrowUpRight size={16} strokeWidth={1.8}/>
+          <Link className="header-cta" href="/apply" aria-current={pathname === "/apply" ? "page" : undefined} onClick={() => setOpen(false)}>
+            Get started <ArrowUpRight size={16} strokeWidth={1.8}/>
           </Link>
           <button
             ref={toggleRef}
@@ -78,8 +78,8 @@ export default function SiteHeader() {
             {item.label}
           </Link>
         ))}
-        <Link href="/join" className="mobile-contact" aria-current={pathname === "/join" ? "page" : undefined} onClick={() => setOpen(false)}>
-          Get in touch <ArrowUpRight size={17}/>
+        <Link href="/apply" className="mobile-contact" aria-current={pathname === "/apply" ? "page" : undefined} onClick={() => setOpen(false)}>
+          Get started <ArrowUpRight size={17}/>
         </Link>
       </nav>
     </header>

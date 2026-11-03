@@ -5,10 +5,10 @@ import PhotoFrame from "../components/photo-frame";
 import Reveal from "../components/reveal";
 
 const questions = [
-  ["Can I apply for a loan through Lending Ezy today?", "Loan applications and funding are not currently available through this website. You can explore repayment examples and register interest in future availability."],
-  ["Are the repayments shown guaranteed?", "No. The calculator uses an interest rate you choose. Results are estimates, not lender quotes, eligibility decisions or regulated APR disclosures."],
-  ["Which countries does Lending Ezy support?", "The website is designed for an international audience. Lending services will only be introduced in countries where the appropriate permissions and authorised providers are in place."],
-  ["Can lending institutions work with Lending Ezy?", "Yes. Financial institutions can send a partnership enquiry and discuss potential technology requirements with our team."]
+  ["How do I get started?", "Choose personal or business, build your financing plan and review the monthly repayment. You can save and revisit different scenarios."],
+  ["Can I change my repayment assumptions?", "Yes. Adjust the amount, currency, interest rate or repayment term as often as you like."],
+  ["Where are my saved plans?", "Use My plans to find scenarios stored on this device. You can edit, duplicate, compare, download or remove them."],
+  ["Can I speak with Lending Ezy?", "Visit Get in touch for information about reaching the team or making an institutional enquiry."]
 ];
 
 export default function Home() {
@@ -21,10 +21,10 @@ export default function Home() {
             <h1>Make room for <em>what matters.</em></h1>
             <p className="hero-description">Borrowing is a big decision. Start with clear numbers, straightforward explanations and the confidence to understand your options.</p>
             <div className="hero-actions">
-              <Link href="/#calculator" className="button button-cream">Explore repayments <ArrowUpRight size={18}/></Link>
-              <Link href="/how-it-works" className="text-button text-button-light">See how it works <ArrowRight size={18}/></Link>
+              <Link href="/apply" className="button button-cream">Build your plan <ArrowUpRight size={18}/></Link>
+              <Link href="/#calculator" className="text-button text-button-light">Explore repayments <ArrowRight size={18}/></Link>
             </div>
-            <p className="hero-disclaimer">Repayment estimates are for information only. Lending availability varies by country.</p>
+            <p className="hero-disclaimer">A clearer starting point for your next financial decision.</p>
           </div>
           <div className="hero-editorial" aria-label="Three principles behind Lending Ezy">
             <div className="editorial-top"><span>THE LENDING EZY APPROACH</span><span>01 — 03</span></div>
@@ -50,15 +50,15 @@ export default function Home() {
         <div className="container">
           <div className="section-heading-row"><div><p className="overline">Find your direction</p><h2>What are you <em>planning?</em></h2></div><p>Explore the possibilities at your own pace. No pressure, no complicated language.</p></div>
           <Reveal className="product-grid">
-            <Link href="/personal" className="product-tile product-tile-personal">
+            <Link href="/apply?type=personal" className="product-tile product-tile-personal">
               <div className="tile-top"><span>01 / FOR INDIVIDUALS</span><ArrowUpRight size={25}/></div>
               <div className="tile-art tile-art-personal" aria-hidden="true"><span className="tile-circle"/><span className="tile-cut"/></div>
-              <div><h3>Personal borrowing</h3><p>Make sense of repayments for the things that matter to you.</p><span className="tile-link">Explore personal borrowing <ArrowRight size={18}/></span></div>
+              <div><h3>Personal borrowing</h3><p>Make sense of repayments for the things that matter to you.</p><span className="tile-link">Start a personal plan <ArrowRight size={18}/></span></div>
             </Link>
-            <Link href="/business" className="product-tile product-tile-business">
+            <Link href="/apply?type=business" className="product-tile product-tile-business">
               <div className="tile-top"><span>02 / FOR BUSINESSES</span><ArrowUpRight size={25}/></div>
               <div className="tile-art tile-art-business" aria-hidden="true"><span/><span/><span/></div>
-              <div><h3>Business borrowing</h3><p>Plan ahead with clearer figures for your next business decision.</p><span className="tile-link">Explore business borrowing <ArrowRight size={18}/></span></div>
+              <div><h3>Business borrowing</h3><p>Plan ahead with clearer figures for your next business decision.</p><span className="tile-link">Start a business plan <ArrowRight size={18}/></span></div>
             </Link>
           </Reveal>
         </div>
@@ -96,7 +96,7 @@ export default function Home() {
           <div className="steps-list">
             <div><span>01</span><div><h3>Start with your needs</h3><p>Think about what you want to achieve and what repayments would be manageable.</p></div><ChevronRight size={21}/></div>
             <div><span>02</span><div><h3>Explore the figures</h3><p>Use the calculator to understand the relationship between term, rate and total cost.</p></div><ChevronRight size={21}/></div>
-            <div><span>03</span><div><h3>Ask about availability</h3><p>Register interest or contact our team. We'll be clear about what is and isn't available.</p></div><ChevronRight size={21}/></div>
+            <div><span>03</span><div><h3>Save and compare</h3><p>Keep your favourite scenarios and return to them whenever your plans change.</p></div><ChevronRight size={21}/></div>
           </div>
         </Reveal>
       </section>
@@ -106,7 +106,7 @@ export default function Home() {
           <div><p className="overline">Our principles</p><h2>Trust is built<br/><em>in the details.</em></h2></div>
           <div className="principles-grid">
             <article><span className="principle-icon"><Check size={22}/></span><h3>Clear information</h3><p>Plain language and transparent assumptions, so the figures are easier to understand.</p></article>
-            <article><span className="principle-icon"><ShieldCheck size={22}/></span><h3>Responsible by design</h3><p>We won't present a repayment estimate as a guaranteed offer or a credit decision.</p></article>
+            <article><span className="principle-icon"><ShieldCheck size={22}/></span><h3>Responsible by design</h3><p>Clear calculations, helpful context and responsible planning at every stage.</p></article>
             <article><span className="principle-icon"><Globe2 size={22}/></span><h3>International perspective</h3><p>Designed to work across borders, while respecting the rules of each market.</p></article>
           </div>
         </Reveal>
@@ -118,7 +118,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="closing-section"><div className="container closing-layout"><div><p className="overline overline-light">Your next chapter</p><h2>A little more clarity<br/>goes a long way.</h2><p>Have a question about Lending Ezy or want to hear when services become available?</p></div><Link href="/join" className="button button-cream">Start a conversation <ArrowUpRight size={18}/></Link></div></section>
+      <section className="closing-section"><div className="container closing-layout"><div><p className="overline overline-light">Your next chapter</p><h2>A little more clarity<br/>goes a long way.</h2><p>Put your goals and the numbers together in a plan you can keep.</p></div><Link href="/apply" className="button button-cream">Get started <ArrowUpRight size={18}/></Link></div></section>
     </main>
   );
 }
