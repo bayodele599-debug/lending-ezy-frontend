@@ -40,6 +40,15 @@ export default function SubmitFinancingRequest({plan,onClose}:Props){
   formRef.current?.focus();
   return()=>{document.body.style.overflow=prev;document.removeEventListener("keydown",dismiss);previousFocus?.focus({preventScroll:true});};
  },[]);
+ useEffect(()=>{
+  if(process.env.NEXT_PUBLIC_CUSTOMER_PORTAL_ENABLED!=="true"&&process.env.NODE_ENV!=="development")return;
+  fetch("/api/account/me",{cache:"no-store"}).then(async r=>{
+   if(!r.ok)return;
+   const profile=await r.json();
+   if(typeof profile.full_name==="string")setName(profile.full_name);
+   if(typeof profile.email==="string")setEmail(profile.email);
+  }).catch(()=>undefined);
+ },[]);
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   if(!requestIntakeEnabled||!token||busy||!consent||!acknowledged)return;
@@ -47,13 +56,30 @@ export default function SubmitFinancingRequest({plan,onClose}:Props){
   try{
    const captcha=siteKey?document.querySelector<HTMLInputElement>('input[name="cf-turnstile-response"]')?.value:undefined;
    if(siteKey&&!captcha)throw new Error("Complete the verification check before submitting.");
-   const response=await postJSON<{received:boolean;reference?:string|null;status:string}>("/api/v1/financing-requests",{
+   const payload={
     client_token:token,kind:plan.type,purpose:plan.purpose,country:plan.country,currency:plan.currency,
     amount:plan.amount.toFixed(2),term_months:plan.months,assumed_annual_rate:plan.annualRate.toFixed(2),
     name,email,business_name:plan.type==="business"?businessName:undefined,
     message:message.trim()||undefined,consent_to_contact:consent,confirms_estimate_only:acknowledged,
     turnstile_token:captcha
-   });
+   };
+   type Received={received:boolean;reference?:string|null;status:string};
+   let response:Received;
+   const useAccount=process.env.NEXT_PUBLIC_CUSTOMER_PORTAL_ENABLED==="true"||
+     process.env.NODE_ENV==="development";
+   const profile=useAccount?await fetch("/api/account/me",{cache:"no-store"}).catch(()=>null):null;
+   if(profile?.ok){
+    const customer=await profile.json();
+    if(String(customer.email).toLowerCase()!==email.trim().toLowerCase())
+     throw new Error("Use your verified account email for an account-linked request.");
+    const sent=await fetch("/api/account/submit-request",{method:"POST",
+     headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    const data=await sent.json().catch(()=>({}));
+    if(!sent.ok)throw new Error(data.detail||data.error||"Your request could not be sent.");
+    response=data as Received;
+   }else{
+    response=await postJSON<Received>("/api/v1/financing-requests",payload);
+   }
    if(!response.received||!response.reference)throw new Error("We could not confirm receipt. Please retry.");
    setReference(response.reference);
   }catch(caught){setError(caught instanceof Error?caught.message:"Unable to submit your request.");}
