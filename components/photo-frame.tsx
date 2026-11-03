@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import useStableReducedMotion from "../lib/use-stable-reduced-motion";
 
 type Props = {
   src: string;
@@ -14,9 +15,11 @@ type Props = {
 };
 
 export default function PhotoFrame({
-  src, alt, credit, creditHref, className = "", sizes = "(max-width: 900px) 100vw, 50vw", priority = false
+  src, alt, className = "", sizes = "(max-width: 900px) 100vw, 50vw", priority = false
 }: Props) {
-  const reducedMotion = useReducedMotion() === true;
+  const reducedMotion = useStableReducedMotion();
+  // Image credits and licence references are maintained in README.md.
+  // The image is intentionally free of visual labels and clickable overlays.
   return (
     <motion.figure
       className={"editorial-photo " + className}
@@ -33,11 +36,6 @@ export default function PhotoFrame({
         priority={priority}
         sizes={sizes}
       />
-      <figcaption>
-        <a href={creditHref} target="_blank" rel="noopener noreferrer" aria-label={"Photo by " + credit + " on Unsplash (opens in new tab)"}>
-          Photo: {credit} / Unsplash
-        </a>
-      </figcaption>
     </motion.figure>
   );
 }

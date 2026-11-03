@@ -1,0 +1,45 @@
+name: Responsive browser audit
+
+on:
+  pull_request:
+    paths:
+      - 'app/**'
+      - 'components/**'
+      - 'scripts/responsive-audit.mjs'
+      - '.github/workflows/responsive.yml'
+  workflow_dispatch:
+
+jobs:
+  browser-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npm install --no-save --no-audit --no-fund playwright@1.55.1
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Launch local site
+        run: |
+          npm run start > /tmp/lending-ezy-next.log 2>&1 &
+          echo $! > /tmp/lending-ezy-next.pid
+          for i in {1..45}; do
+            if curl --fail --silent --output /dev/null http://127.0.0.1:3000/; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/lending-ezy-next.log
+          exit 1
+      - name: Check layouts, sticky header and mobile navigation
+        run: node scripts/responsive-audit.mjs
+      - name: Upload screenshots and server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsive-audit
+          path: |
+            responsive-screenshots/
+            /tmp/lending-ezy-next.log
+          if-no-files-found: warn
