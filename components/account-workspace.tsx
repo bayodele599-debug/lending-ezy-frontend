@@ -82,6 +82,20 @@ export default function AccountWorkspace(){
   catch(e){setError(e instanceof Error?e.message:"Could not update profile");}
   finally{setBusy(false);}
  }
+ async function exportAccount(){
+  setBusy(true);setError("");
+  try{
+   const data=await request<Record<string,unknown>>("export");
+   const contents=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+   const url=URL.createObjectURL(contents);
+   const anchor=document.createElement("a");
+   anchor.href=url;anchor.download="lending-ezy-account-data.json";
+   document.body.appendChild(anchor);anchor.click();anchor.remove();
+   window.setTimeout(()=>URL.revokeObjectURL(url),1500);
+   setNotice("Your account data export was generated on this device.");
+  }catch(e){setError(e instanceof Error?e.message:"Could not export account data");}
+  finally{setBusy(false);}
+ }
  async function loadData(){
   const [a,b]=await Promise.all([request<{plans:CloudPlan[]}>("plans"),request<{requests:Case[]}>("requests")]);
   setPlans(a.plans);setCases(b.requests);
@@ -255,6 +269,7 @@ export default function AccountWorkspace(){
       </form>
       <p>Only an authenticated customer can access their saved account plans and linked requests.</p>
       <Link href="/dashboard" className="inline-link">My browser-only plans <ArrowUpRight size={16}/></Link>
+      <button className="account-data-download" type="button" onClick={exportAccount} disabled={busy}><Download size={16}/> Download account data</button>
      </aside>
     </div>
    </>}

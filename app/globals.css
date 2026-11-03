@@ -1383,3 +1383,10 @@ body{background:#f8f8f4}
 .saved-account-prompt p{flex:1;font-size:12px;line-height:1.7;margin:0}
 .saved-account-prompt a{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;white-space:nowrap}
 @media(max-width:680px){.saved-account-prompt{flex-wrap:wrap}.saved-account-prompt a{width:100%}}
+
+
+.account-data-download{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
+ border:1px solid #b8d0b8;background:#eff6ed;color:#2d6444;border-radius:10px;
+ padding:12px 14px;font-size:12px;font-weight:700;margin-top:19px;cursor:pointer}
+.account-data-download:hover{background:#e1f0df}
+.account-data-download:disabled{opacity:.5;cursor:not-allowed}

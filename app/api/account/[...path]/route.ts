@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 type Context={params:Promise<{path:string[]}>};
 const COOKIE="lending_ezy_customer_session";
 const UUID="[0-9a-fA-F-]{36}";
-const permitted=new RegExp("^(register|login|logout|verify-email|resend-verification|password/request-reset|password/reset|me|plans|plans/"+UUID+"|requests|requests/"+UUID+"/messages|submit-request)$");
+const permitted=new RegExp("^(register|login|logout|verify-email|resend-verification|password/request-reset|password/reset|me|export|plans|plans/"+UUID+"|requests|requests/"+UUID+"/messages|submit-request)$");
 
 function settings(){
  const allowed=process.env.CUSTOMER_PORTAL_ENABLED==="true"||
