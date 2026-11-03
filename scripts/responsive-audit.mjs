@@ -122,7 +122,7 @@ for (const width of widths) {
 
       if (["/", "/personal", "/business"].includes(route)) {
         await page.evaluate(() => window.scrollTo(0, 640));
-        await page.waitForTimeout(100);
+        await page.waitForFunction(() => window.scrollY < 28 || document.querySelector(".site-header")?.classList.contains("is-scrolled"), null, {timeout: 2500}).catch(() => {});
         const headerAtScroll = await page.locator(".site-header").evaluate(el => ({
           top: el.getBoundingClientRect().top,
           compact: el.classList.contains("is-scrolled")
