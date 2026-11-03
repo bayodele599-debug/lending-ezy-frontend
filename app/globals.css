@@ -441,3 +441,11 @@ html{scroll-padding-top:118px}
 
 .result-actions button:disabled{opacity:.5;cursor:not-allowed}
 .calculator-guidance-inline{font-size:12px;color:#63796b}
+
+.site-system-page{min-height:70vh;padding:clamp(140px,16vw,200px) 0 130px;background:#f5f6ef}
+.site-system-page .container{max-width:850px}
+.site-system-page h1{font-size:clamp(56px,8vw,95px);font-weight:500;line-height:1.06;letter-spacing:-.065em}
+.site-system-page h1 em{color:#6b8c70}
+.site-system-page p:not(.overline){font-size:15px;color:#657b6b;max-width:550px}
+.site-system-actions{display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-top:32px}
+@media(max-width:650px){.site-system-page{padding:125px 0 80px}}

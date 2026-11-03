@@ -1,6 +1,7 @@
 // Responsive browser smoke checks against the built Next.js server.
 // Uses the Playwright installation supplied by .github/workflows/responsive.yml.
 import { chromium } from "playwright";
+import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
 
 const baseURL = process.env.BASE_URL || "http://127.0.0.1:3000";
@@ -56,6 +57,33 @@ for (const width of widths) {
         failures.push(width + " " + route + " header is not sticky: " + metrics.headerPosition);
       }
       if (metrics.overlays !== 0) failures.push(width + " " + route + " photo credit overlay still present");
+      // Structural and navigation checks on every page at every viewport.
+      const structure = await page.evaluate(() => {
+        const h1 = document.querySelectorAll("#main-content h1").length;
+        const title = document.title;
+        const broken = [...document.querySelectorAll('a[href]')].filter(link => {
+          const href = link.getAttribute("href");
+          if (!href || href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("https://")) return false;
+          const url = new URL(href, location.href);
+          const valid = new Set(["/", "/apply", "/dashboard", "/personal", "/business", "/about", "/partner", "/faq", "/how-it-works", "/join", "/privacy", "/terms"]);
+          const routeExists = valid.has(url.pathname);
+          const anchorExists = !url.hash || (url.pathname !== location.pathname && url.pathname !== "/") || document.getElementById(decodeURIComponent(url.hash.slice(1))) !== null;
+          return !routeExists || !anchorExists;
+        }).map(link => link.getAttribute("href")).slice(0, 10);
+        return { h1, title, broken };
+      });
+      if (structure.h1 !== 1) failures.push(width + " " + route + " expected one page h1, got " + structure.h1);
+      if (!structure.title?.includes("Lending Ezy")) failures.push(width + " " + route + " missing descriptive page title");
+      if (structure.broken.length) failures.push(width + " " + route + " internal links/anchors invalid: " + structure.broken.join(", "));
+      if ((width === 390 || width === 1440) && ["/", "/apply", "/dashboard", "/join", "/personal", "/business"].includes(route)) {
+        try {
+          const report = await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa"]).analyze();
+          const important = report.violations.filter(v => v.impact === "critical" || v.impact === "serious");
+          if (important.length) failures.push(width + " " + route + " accessibility issues: " + important.map(v => v.id + " (" + v.nodes.length + ")").join(", "));
+        } catch (e) {
+          failures.push(width + " " + route + " accessibility audit failed: " + String(e));
+        }
+      }
 
       if (["/", "/personal", "/business"].includes(route)) {
         await page.evaluate(() => window.scrollTo(0, 640));
@@ -91,6 +119,14 @@ for (const width of widths) {
   if (width === 390 || width === 1440) {
     currentRoute = "/apply → /dashboard customer journey";
     try {
+      await page.goto(baseURL + "/business", { waitUntil: "domcontentloaded" });
+      const productSelection = page.getByRole("group", {name:"Borrowing purpose"});
+      if (await productSelection.getByRole("button", {name:"Business"}).getAttribute("aria-pressed") !== "true")
+        throw new Error("Business page calculator did not default to business");
+      const calculatorAmount = await page.getByLabel("Amount (USD)").inputValue();
+      if (calculatorAmount !== "60000") throw new Error("Business calculator amount was not 60000: "+calculatorAmount);
+      await page.getByRole("button", {name:"Reset"}).click();
+      if (await page.getByLabel("Amount (USD)").inputValue() !== "60000") throw new Error("Business calculator reset to personal figures");
       await page.goto(baseURL + "/apply?type=business&currency=GBP&amount=45000&months=36&rate=8", { waitUntil: "domcontentloaded" });
       // US is the starting country; an existing saved plan remains authoritative when editing.
       const defaultCountry = await page.getByLabel("Country or region").inputValue();
@@ -146,7 +182,9 @@ for (const width of widths) {
       await page.getByRole("link", { name: "Edit plan" }).click();
       await page.getByLabel("Country or region").waitFor();
       if (await page.getByLabel("Country or region").inputValue() !== "GB") throw new Error("Edit did not load saved plan");
-      console.log("PASS " + width + "px customer planning journey | save/reload/download/duplicate/compare/delete/edit");
+      await page.getByRole("button", {name:"Back"}).click();
+      if (await page.getByLabel("Country or region").inputValue() !== "GB") throw new Error("Back erased edited country");
+      console.log("PASS " + width + "px customer journey | country/edit/scroll/save/reload/download/duplicate/compare/delete");
     } catch (error) {
       failures.push(width + " customer journey " + String(error));
     }

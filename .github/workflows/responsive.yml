@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: '22'
       - run: npm install --no-audit --no-fund
-      - run: npm install --no-save --no-audit --no-fund playwright@1.55.1
+      - run: npm install --no-save --no-audit --no-fund playwright@1.55.1 @axe-core/playwright@4.10.2
       - run: npx playwright install --with-deps chromium
       - run: npm run build
       - name: Launch local site

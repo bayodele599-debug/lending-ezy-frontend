@@ -76,7 +76,7 @@ export default function RepaymentCalculator({initialProduct = "personal"}: {init
           <label className="form-field"><span>Repayment period</span><select value={months} onChange={event => setMonths(Number(event.target.value))}>{repaymentTerms.map(option => <option key={option} value={option}>{option} months</option>)}</select></label>
         </div>
         <div className="amount-heading"><label htmlFor="loan-amount">Amount to borrow</label><span>{money(amount)}</span></div>
-        <input id="loan-amount" className="amount-range" type="range" min="500" max={sliderMax} step={amount > 250000 ? 10000 : 500} value={Math.min(sliderMax, Math.max(500, amount))} onChange={event => setAmount(Number(event.target.value))}/>
+        <input id="loan-amount" className="amount-range" type="range" min="500" max={sliderMax} step={500} value={Math.min(sliderMax, Math.max(500, amount))} onChange={event => setAmount(Number(event.target.value))}/>
         <div className="range-labels"><span>{money(500)}</span><span>{money(sliderMax)}</span></div>
         <div className="form-row calc-bottom-fields">
           <label className="form-field"><span>Amount ({currency})</span><input type="number" inputMode="decimal" min="500" max="10000000" step="100" value={amount} onChange={event => setAmount(Number(event.target.value))} onBlur={() => setAmount(value => Number.isFinite(value) ? Math.min(10000000, Math.max(500, value)) : 500)}/></label>
