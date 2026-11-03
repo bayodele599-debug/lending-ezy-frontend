@@ -96,9 +96,12 @@ export function readPlans(): SavedPlan[] {
     const items: unknown = JSON.parse(raw);
     if (!Array.isArray(items)) return [];
     return items
-      .filter((item): item is SavedPlan => validPlan(item) &&
-        typeof item.id === "string" && item.id.length <= 100 &&
-        typeof item.createdAt === "string" && typeof item.updatedAt === "string")
+      .filter((item): item is SavedPlan => {
+        if (!validPlan(item)) return false;
+        const saved = item as SavedPlan;
+        return typeof saved.id === "string" && saved.id.length <= 100 &&
+          typeof saved.createdAt === "string" && typeof saved.updatedAt === "string";
+      })
       .slice(0, 25);
   } catch { return []; }
 }
@@ -108,6 +111,7 @@ export function savePlan(plan: PlanInput, editingId?: string): SavedPlan {
   if (typeof window === "undefined") throw new Error("Saving is available in your browser.");
   const items = readPlans();
   const existing = editingId ? items.find(item => item.id === editingId) : undefined;
+  if (!existing && items.length >= 25) throw new Error("You have reached the 25-plan limit. Remove a plan before saving another.");
   const now = new Date().toISOString();
   const next: SavedPlan = {
     ...plan,
@@ -115,7 +119,7 @@ export function savePlan(plan: PlanInput, editingId?: string): SavedPlan {
     createdAt: existing?.createdAt || now,
     updatedAt: now
   };
-  const collection = [next, ...items.filter(x => x.id !== next.id)].slice(0, 25);
+  const collection = [next, ...items.filter(x => x.id !== next.id)];
   try { window.localStorage.setItem(PLAN_STORAGE_KEY, JSON.stringify(collection)); }
   catch { throw new Error("Your browser could not save this plan. Check available storage or private browsing settings."); }
   return next;

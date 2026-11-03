@@ -31,8 +31,23 @@ export default function Apply() {
         setPlan({type: found.type, purpose: found.purpose, country: found.country, currency: found.currency, amount: found.amount, months: found.months, annualRate: found.annualRate});
         setEditingId(found.id);
       }
-    } else if (params.get("type") === "business") {
-      setPlan(old => ({...old, type: "business", purpose: businessPurposes[0], amount: 60000, months: 36}));
+    } else {
+      const type = params.get("type") === "business" ? "business" : "personal";
+      const amount = Number(params.get("amount"));
+      const months = Number(params.get("months"));
+      const rate = Number(params.get("rate"));
+      const currency = params.get("currency");
+      const allowedCurrency = supportedCurrencies.find(x => x === currency);
+      setPlan(old => ({
+        ...old,
+        type,
+        purpose: type === "business" ? businessPurposes[0] : personalPurposes[0],
+        amount: params.has("amount") && Number.isFinite(amount) && amount >= 500 && amount <= 10000000
+          ? amount : type === "business" ? 60000 : 12000,
+        months: repaymentTerms.find(x => x === months) ?? (type === "business" ? 36 : 24),
+        annualRate: params.has("rate") && Number.isFinite(rate) && rate >= 0 && rate <= 40 ? rate : 12,
+        currency: allowedCurrency ?? "USD"
+      }));
     }
     setReady(true);
   }, []);
@@ -187,7 +202,7 @@ export default function Apply() {
             <div><dt>Term</dt><dd>{plan.months} months</dd></div>
             <div><dt>Assumed rate</dt><dd>{plan.annualRate}% / year</dd></div>
             <div><dt>Est. interest</dt><dd>{money(estimate.interest, plan.currency)}</dd></div>
-            <div className="planner-summary-total"><dt>Est. total cost</dt><dd>{money(estimate.total, plan.currency)}</dd></div>
+            <div className="planner-summary-total"><dt>Est. total repayment</dt><dd>{money(estimate.total, plan.currency)}</dd></div>
           </dl>
           <p className="planner-summary-fine">Repayment illustration excludes fees, taxes and other charges. Change the assumptions to compare outcomes.</p>
         </aside>

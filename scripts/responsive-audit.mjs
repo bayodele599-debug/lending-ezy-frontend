@@ -5,7 +5,7 @@ import { mkdir } from "node:fs/promises";
 
 const baseURL = process.env.BASE_URL || "http://127.0.0.1:3000";
 const widths = [320, 360, 390, 430, 650, 768, 900, 1024, 1280, 1440, 1920];
-const routes = ["/", "/personal", "/business", "/how-it-works", "/about", "/faq", "/partner", "/join", "/privacy", "/terms"];
+const routes = ["/", "/personal", "/business", "/how-it-works", "/about", "/faq", "/partner", "/join", "/apply", "/dashboard", "/privacy", "/terms"];
 const captures = new Set([320, 390, 768, 1440]);
 const failures = [];
 const warnings = [];
@@ -73,7 +73,7 @@ for (const width of widths) {
         if (await page.locator("#mobile-navigation").isVisible()) failures.push(width + " menu did not close via Escape");
       }
 
-      if (captures.has(width) && ["/", "/personal", "/business", "/join"].includes(route)) {
+      if (captures.has(width) && ["/", "/personal", "/business", "/join", "/apply", "/dashboard"].includes(route)) {
         const slug = route === "/" ? "home" : route.slice(1);
         // Capture the page in its natural top-of-page state, not from the prior sticky-header scroll test.
         await page.evaluate(() => { window.scrollTo({ top: 0, behavior: "instant" }); document.activeElement?.blur?.(); });
@@ -83,6 +83,48 @@ for (const width of widths) {
       console.log("PASS " + width + "px " + route + " | doc=" + metrics.scrollWidth + "px");
     } catch (error) {
       failures.push(width + " " + route + " " + String(error));
+    }
+  }
+
+  // Exercise a real planning journey in the same browser used for layout tests.
+  // Only financial assumptions are persisted; no personal identifiers or fake applications.
+  if (width === 390 || width === 1440) {
+    currentRoute = "/apply → /dashboard customer journey";
+    try {
+      await page.goto(baseURL + "/apply?type=business&currency=GBP&amount=45000&months=36&rate=8", { waitUntil: "domcontentloaded" });
+      await page.getByLabel("Country or region").selectOption("GB");
+      await page.getByRole("button", { name: "Continue" }).click();
+      await page.getByLabel("Financing amount (GBP)").waitFor();
+      const actualAmount = await page.getByLabel("Financing amount (GBP)").inputValue();
+      const actualRate = await page.getByLabel("Assumed annual interest rate (%)").inputValue();
+      if (actualAmount !== "45000" || actualRate !== "8") throw new Error("Calculator deep link did not populate the planner");
+      await page.getByRole("button", { name: "Continue" }).click();
+      if (!await page.getByText("This saves a private financial estimate", { exact: false }).isVisible()) {
+        throw new Error("Plan review disclosure is missing");
+      }
+      await page.getByRole("button", { name: "Save my plan" }).click();
+      await page.waitForURL(/\/dashboard\?saved=1/, { timeout: 10000 });
+      await page.locator(".saved-card").first().waitFor();
+      if (await page.locator(".saved-card").count() !== 1) throw new Error("New plan was not saved");
+      await page.reload();
+      if (await page.locator(".saved-card").count() !== 1) throw new Error("Saved plan did not survive reload");
+      const planExport = page.waitForEvent("download");
+      await page.getByRole("button", { name: "Download repayment schedule" }).click();
+      const download = await planExport;
+      if (!download.suggestedFilename().endsWith(".csv")) throw new Error("Schedule export filename is not CSV");
+      await page.getByRole("button", { name: "Duplicate plan" }).click();
+      if (await page.locator(".saved-card").count() !== 2) throw new Error("Duplication failed");
+      for (const input of await page.locator(".saved-compare input").all()) await input.check();
+      if (!await page.locator(".saved-compare-table").isVisible()) throw new Error("Comparison table is missing");
+      await page.getByRole("button", { name: "Remove plan" }).first().click();
+      await page.getByRole("button", { name: "Delete plan" }).click();
+      if (await page.locator(".saved-card").count() !== 1) throw new Error("Delete failed");
+      await page.getByRole("link", { name: "Edit plan" }).click();
+      await page.getByLabel("Country or region").waitFor();
+      if (await page.getByLabel("Country or region").inputValue() !== "GB") throw new Error("Edit did not load saved plan");
+      console.log("PASS " + width + "px customer planning journey | save/reload/download/duplicate/compare/delete/edit");
+    } catch (error) {
+      failures.push(width + " customer journey " + String(error));
     }
   }
   await context.close();
