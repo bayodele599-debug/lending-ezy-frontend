@@ -32,3 +32,15 @@ The contact page uses `lending-ezy-backend` via `NEXT_PUBLIC_API_URL`. To accept
 ## Financial-service boundary
 
 This is an informational website. It does not currently accept credit applications, verify eligibility, approve or disburse loans, or process repayments. Country-specific credit products require authorised lending entities, operational readiness, and legally reviewed disclosures before activation.
+
+
+## Editorial imagery and motion
+
+The site uses restrained, opt-in-view animations with reduced-motion support. Editorial photography is shown only in a few storytelling sections and on personal/business information pages. The photos are illustrations of everyday life, not Lending Ezy customers, staff, or testimonials.
+
+Photography (free under the Unsplash License at the time selected):
+- [Ninthgrid — two women at a café](https://unsplash.com/photos/AB04SBsdHjY)
+- [Ninthgrid — woman working at a café](https://unsplash.com/photos/J-IBERCeDTY)
+- [GN Group — jewellery maker at a workbench](https://unsplash.com/photos/9rdoc89WxP0)
+
+The images are served from Unsplash's image CDN. Before a high-traffic public launch, review CDN dependency, image-loading privacy and whether to self-host optimised licensed copies.
