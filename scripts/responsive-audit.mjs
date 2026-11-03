@@ -75,6 +75,9 @@ for (const width of widths) {
 
       if (captures.has(width) && ["/", "/personal", "/business", "/join"].includes(route)) {
         const slug = route === "/" ? "home" : route.slice(1);
+        // Capture the page in its natural top-of-page state, not from the prior sticky-header scroll test.
+        await page.evaluate(() => { window.scrollTo({ top: 0, behavior: "instant" }); document.activeElement?.blur?.(); });
+        await page.waitForTimeout(100);
         await page.screenshot({ path: "responsive-screenshots/" + slug + "-" + width + ".png", fullPage: true, animations: "disabled" });
       }
       console.log("PASS " + width + "px " + route + " | doc=" + metrics.scrollWidth + "px");

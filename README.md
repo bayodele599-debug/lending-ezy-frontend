@@ -51,3 +51,5 @@ The images are served from Unsplash's image CDN. Before a high-traffic public la
 The site header is a persistent sticky, frosted-glass island over the page (with solid fallback for higher-contrast/reduced-transparency preferences). Mobile navigation supports Escape-key dismissal, outside-click dismissal, visible focus states, active-route indication and narrow viewports. The photo-credit links are not rendered on top of images; source attribution is retained in the Editorial imagery section above. Scroll anchor offsets account for the persistent header. Responsive CSS covers small phones, large phones, tablets and desktop widths.
 
 Automated Next.js production builds verify compilation/type safety. Browser-specific responsive visual checks remain separate and should be completed for a full release QA sign-off.
+
+The contact-page country/region selector uses a committed, stable list of English country labels to avoid server/client locale-data hydration differences.
