@@ -1,26 +1,103 @@
-'use client';
-import Link from 'next/link';
-import {motion,useReducedMotion} from 'framer-motion';
-import {ArrowUpRight,ArrowRight,Globe2,ShieldCheck,Layers3,ChartNoAxesCombined,LockKeyhole,Sparkles,CheckCircle2} from 'lucide-react';
-import Calculator from '../components/calculator';
-const features=[{Icon:ShieldCheck,title:'Built around trust',text:'Every interaction is designed to communicate financial information clearly and responsibly.'},{Icon:ChartNoAxesCombined,title:'Clarity, not complexity',text:'See real calculations from our sandbox backend instead of decorative financial numbers.'},{Icon:Globe2,title:'Global by architecture',text:'Multiple currencies and jurisdiction-by-jurisdiction lending activation.'}];
-export default function Home(){const reduce=useReducedMotion();return <main>
- <section className="hero"><div className="halo halo-a"/><div className="halo halo-b"/><div className="container hero-grid"><div className="hero-copy">
- <motion.div className="hero-kicker" initial={reduce?false:{opacity:0,y:15}} animate={{opacity:1,y:0}}> <span className="pulse"/> THE NEXT ERA OF LENDING TECHNOLOGY</motion.div>
- <motion.h1 initial={reduce?false:{opacity:0,y:25}} animate={{opacity:1,y:0}} transition={{delay:.1}}>Finance should<br/>move <em>you forward.</em></motion.h1>
- <motion.p initial={reduce?false:{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:.2}}>Discover a clearer way to explore credit — and a better technology foundation for the institutions serving it.</motion.p>
- <div className="hero-buttons"><Link href="/join" className="button button-white">Join early access <ArrowUpRight size={17}/></Link><Link href="/partner" className="button button-outline">For lending partners <ArrowRight size={17}/></Link></div>
- <div className="hero-foot"><span><ShieldCheck size={18}/> Responsible by design</span><span><Globe2 size={18}/> International architecture</span></div>
- </div><motion.div className="hero-visual" initial={reduce?false:{opacity:0,scale:.94,y:25}} animate={{opacity:1,scale:1,y:0}} transition={{duration:.7,delay:.18}} aria-hidden="true">
- <div className="orbital-ring ring-one"/><div className="orbital-ring ring-two"/>
- <div className="hero-fin-card"><div className="fin-card-head"><span className="fin-emblem">L.</span><small>YOUR FINANCIAL ROADMAP</small></div><span className="fin-overline">A CLEARER OUTLOOK</span><div className="fin-number">$24,800<span>.00</span></div><div className="fin-progress"><i/></div><div className="fin-card-bottom"><div><small>Flexible illustrations</small><strong>Multiple terms</strong></div><div><small>Information first</small><strong>Full breakdown</strong></div></div></div>
- <div className="floating-card floating-one"><Layers3 size={20}/><span><small>Built to scale</small><b>Global infrastructure</b></span><CheckCircle2 size={20}/></div>
- <div className="floating-card floating-two"><ChartNoAxesCombined size={20}/><span><small>Transparent by design</small><b>See what matters</b></span></div>
- </motion.div></div></section>
- <section className="trust-bar"><div className="container trust-content"><span>BUILT ON BETTER PRINCIPLES</span><span><LockKeyhole size={17}/> Security-first architecture</span><span><Globe2 size={17}/> Global ready</span><span><Sparkles size={17}/> Thoughtful experience</span></div></section>
- <section className="section" id="calculator"><div className="container"><div className="section-header"><div><span className="eyebrow">TRANSPARENCY MATTERS</span><h2>See the bigger <em>picture.</em></h2></div><p>Change a number. See the difference. Understand example repayments in seconds, with real financial calculations behind the interface.</p></div><Calculator/></div></section>
- <section className="section features"><div className="container"><div className="center-heading"><span className="eyebrow">INTENTIONALLY DESIGNED</span><h2>Financial technology that<br/>puts <em>clarity first.</em></h2><p>Beautiful experiences matter. Reliable infrastructure matters more. We bring both together.</p></div>
- <div className="features-grid">{features.map(({Icon,title,text},i)=><motion.article className="feature-card" key={title} initial={reduce?false:{opacity:0,y:18}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:i*.09}}><div className="feature-icon"><Icon size={24}/></div><h3>{title}</h3><p>{text}</p><span className="feature-number">0{i+1} / 03</span></motion.article>)}</div></div></section>
- <section className="partner-section"><div className="container partner-content"><div><span className="eyebrow">FOR FINANCIAL INSTITUTIONS</span><h2>Better infrastructure.<br/><em>Better lending.</em></h2><p>A configurable technology foundation for responsible, authorised lending operations.</p><Link href="/partner" className="button button-white">Explore partner technology <ArrowUpRight size={17}/></Link></div><div className="partner-symbol"><Layers3 size={70}/></div></div></section>
- <section className="section faq"><div className="container"><span className="eyebrow">GOOD TO KNOW</span><h2>Answers without <em>ambiguity.</em></h2><div className="faq-grid"><article><h3>Can I obtain a loan right now?</h3><p>No. This site is a sandbox technology preview. Real credit applications, offers, and disbursements are not enabled.</p></article><article><h3>Are these interest rates binding?</h3><p>No. The example rates are provided for illustrative calculations and are not regulated APRs or a quote from a lender.</p></article><article><h3>Is the platform global?</h3><p>Its architecture supports multiple currencies. Country-specific lending requires approved partners, operations, and regulatory permissions.</p></article><article><h3>What can lending partners do?</h3><p>We are building workspace tools for product management, credit decisions, repayment servicing and financial reporting.</p></article></div></div></section>
- </main>;}
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight, Check, ChevronRight, CircleHelp, Globe2, MoveUpRight, ShieldCheck } from "lucide-react";
+import RepaymentCalculator from "../components/repayment-calculator";
+
+const questions = [
+  ["Can I apply for a loan through Lending Ezy today?", "Loan applications and funding are not currently available through this website. You can explore repayment examples and register interest in future availability."],
+  ["Are the repayments shown guaranteed?", "No. The calculator uses an interest rate you choose. Results are estimates, not lender quotes, eligibility decisions or regulated APR disclosures."],
+  ["Which countries does Lending Ezy support?", "The website is designed for an international audience. Lending services will only be introduced in countries where the appropriate permissions and authorised providers are in place."],
+  ["Can lending institutions work with Lending Ezy?", "Yes. Financial institutions can send a partnership enquiry and discuss potential technology requirements with our team."]
+];
+
+export default function Home() {
+  return (
+    <main id="main-content">
+      <section className="hero">
+        <div className="container hero-layout">
+          <div className="hero-copy">
+            <p className="overline overline-light"><span className="overline-rule"/> A more thoughtful approach to borrowing</p>
+            <h1>Make room for <em>what matters.</em></h1>
+            <p className="hero-description">Borrowing is a big decision. Start with clear numbers, straightforward explanations and the confidence to understand your options.</p>
+            <div className="hero-actions">
+              <Link href="/#calculator" className="button button-cream">Explore repayments <ArrowUpRight size={18}/></Link>
+              <Link href="/how-it-works" className="text-button text-button-light">See how it works <ArrowRight size={18}/></Link>
+            </div>
+            <p className="hero-disclaimer">Repayment estimates are for information only. Lending availability varies by country.</p>
+          </div>
+          <div className="hero-editorial" aria-label="Three principles behind Lending Ezy">
+            <div className="editorial-top"><span>THE LENDING EZY APPROACH</span><span>01 — 03</span></div>
+            <div className="editorial-monogram" aria-hidden="true"><span>le</span><i>.</i></div>
+            <div className="editorial-bottom">
+              <div><span>01</span><p>Know your numbers.</p></div>
+              <div><span>02</span><p>Understand the details.</p></div>
+              <div><span>03</span><p>Decide on your terms.</p></div>
+            </div>
+          </div>
+        </div>
+        <div className="container hero-baseline"><span>LESS GUESSWORK. MORE CLARITY.</span><span>BUILT FOR THE DECISIONS THAT MATTER <MoveUpRight size={16}/></span></div>
+      </section>
+
+      <section className="section intro-section">
+        <div className="container intro-layout">
+          <div><p className="overline">A different starting point</p><h2>Money is personal.<br/><em>So is your next move.</em></h2></div>
+          <div className="intro-right"><p>Whether you are planning a milestone, managing an unexpected expense or looking ahead for your business, understanding the numbers should be the easy part.</p><Link href="/about" className="inline-link">Why we are building Lending Ezy <ArrowUpRight size={17}/></Link></div>
+        </div>
+      </section>
+
+      <section className="section product-section">
+        <div className="container">
+          <div className="section-heading-row"><div><p className="overline">Find your direction</p><h2>What are you <em>planning?</em></h2></div><p>Explore the possibilities at your own pace. No pressure, no complicated language.</p></div>
+          <div className="product-grid">
+            <Link href="/personal" className="product-tile product-tile-personal">
+              <div className="tile-top"><span>01 / FOR INDIVIDUALS</span><ArrowUpRight size={25}/></div>
+              <div className="tile-art tile-art-personal" aria-hidden="true"><span className="tile-circle"/><span className="tile-cut"/></div>
+              <div><h3>Personal borrowing</h3><p>Make sense of repayments for the things that matter to you.</p><span className="tile-link">Explore personal borrowing <ArrowRight size={18}/></span></div>
+            </Link>
+            <Link href="/business" className="product-tile product-tile-business">
+              <div className="tile-top"><span>02 / FOR BUSINESSES</span><ArrowUpRight size={25}/></div>
+              <div className="tile-art tile-art-business" aria-hidden="true"><span/><span/><span/></div>
+              <div><h3>Business borrowing</h3><p>Plan ahead with clearer figures for your next business decision.</p><span className="tile-link">Explore business borrowing <ArrowRight size={18}/></span></div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="section calculator-section" id="calculator">
+        <div className="container">
+          <div className="section-heading-row"><div><p className="overline">The numbers, made simple</p><h2>See the full <em>picture.</em></h2></div><p>Adjust the amount, interest rate and term. See how each choice changes the estimated monthly repayment and total cost.</p></div>
+          <RepaymentCalculator/>
+        </div>
+      </section>
+
+      <section className="section steps-section">
+        <div className="container steps-layout">
+          <div className="steps-heading"><p className="overline">A clear way forward</p><h2>One step<br/><em>at a time.</em></h2><p>We believe good financial decisions begin with understanding, not urgency.</p><Link href="/how-it-works" className="inline-link">Read how it works <ArrowUpRight size={17}/></Link></div>
+          <div className="steps-list">
+            <div><span>01</span><div><h3>Start with your needs</h3><p>Think about what you want to achieve and what repayments would be manageable.</p></div><ChevronRight size={21}/></div>
+            <div><span>02</span><div><h3>Explore the figures</h3><p>Use the calculator to understand the relationship between term, rate and total cost.</p></div><ChevronRight size={21}/></div>
+            <div><span>03</span><div><h3>Ask about availability</h3><p>Register interest or contact our team. We'll be clear about what is and isn't available.</p></div><ChevronRight size={21}/></div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section principles-section">
+        <div className="container principles-layout">
+          <div><p className="overline">Our principles</p><h2>Trust is built<br/><em>in the details.</em></h2></div>
+          <div className="principles-grid">
+            <article><span className="principle-icon"><Check size={22}/></span><h3>Clear information</h3><p>Plain language and transparent assumptions, so the figures are easier to understand.</p></article>
+            <article><span className="principle-icon"><ShieldCheck size={22}/></span><h3>Responsible by design</h3><p>We won't present a repayment estimate as a guaranteed offer or a credit decision.</p></article>
+            <article><span className="principle-icon"><Globe2 size={22}/></span><h3>International perspective</h3><p>Designed to work across borders, while respecting the rules of each market.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section className="section faq-section">
+        <div className="container faq-layout"><div><p className="overline">Good to know</p><h2>Questions?<br/><em>Let's make it clear.</em></h2><Link className="inline-link" href="/faq">All common questions <ArrowUpRight size={17}/></Link></div>
+          <div className="faq-accordion">{questions.map(([question,answer])=><details key={question}><summary><span>{question}</span><CircleHelp size={19}/></summary><p>{answer}</p></details>)}</div>
+        </div>
+      </section>
+
+      <section className="closing-section"><div className="container closing-layout"><div><p className="overline overline-light">Your next chapter</p><h2>A little more clarity<br/>goes a long way.</h2><p>Have a question about Lending Ezy or want to hear when services become available?</p></div><Link href="/join" className="button button-cream">Start a conversation <ArrowUpRight size={18}/></Link></div></section>
+    </main>
+  );
+}
