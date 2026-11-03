@@ -65,3 +65,10 @@ The public site now has functional customer screens (not placeholder redirects):
 - \`/join\`: the actual enquiry submission form appears only when the existing backend and bot protection are configured; otherwise the page offers a working plan builder instead of disabled form controls.
 
 Saved assumptions remain in the local browser storage on the same device. This is not an online borrower account. Sensitive documents, identity information, financial account credentials and payment data are intentionally excluded from the planning workflow. Credit origination, approval, disbursement and repayments require regulated backend services; the user interface does not represent saved plans as submitted applications. Appropriate disclosure is provided at review and in the legal pages rather than repeated across the marketing sections.
+
+
+## Financing request intake integration
+
+When \`NEXT_PUBLIC_FINANCING_REQUESTS_ENABLED=true\`, \`NEXT_PUBLIC_API_URL\` points to the deployed FastAPI backend and the Turnstile site key is configured in production, each saved plan offers **Submit financing request**. The visitor gives contact details, a business name when appropriate, consent and acknowledgement, then sends the plan with an idempotency UUID to \`POST /api/v1/financing-requests\`. Only a confirmed backend response displays a server-issued reference.
+
+The administrator's protected \`/requests\` page displays submissions and their manual case histories when the backend and both applications are connected. Unsumbitted financial scenarios remain in the user's browser. Administrative case triage is separate from binding lending decisions, disbursements, repayments or credit offers.

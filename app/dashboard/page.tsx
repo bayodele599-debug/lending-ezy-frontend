@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Check, Copy, Download, Pencil, Plus, Trash2, Wallet, X } from "lucide-react";
 import { countries } from "../../lib/countries";
+import SubmitFinancingRequest, {requestIntakeEnabled} from "../../components/submit-financing-request";
 import {
   downloadSchedule, money, readPlans, removePlan, savePlan, summary,
   type SavedPlan, type BorrowerType
@@ -19,6 +20,7 @@ export default function Dashboard() {
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [requestingId, setRequestingId] = useState<string | null>(null);
 
   const refresh = useCallback(() => { setPlans(readPlans()); }, []);
   useEffect(() => {
@@ -106,6 +108,7 @@ export default function Dashboard() {
                 <button title="Download repayment schedule" aria-label="Download repayment schedule" type="button" onClick={() => downloadSchedule(plan)}><Download size={18}/></button>
                 <button title="Remove plan" aria-label="Remove plan" type="button" onClick={() => setDeletingId(plan.id)}><Trash2 size={18}/></button>
               </div>
+              {requestIntakeEnabled && <button type="button" className="saved-request-button" onClick={() => setRequestingId(plan.id)}>Submit financing request <ArrowUpRight size={17}/></button>}
               {deletingId === plan.id && <div className="saved-delete-confirm"><p>Delete this plan from your browser?</p><div><button type="button" onClick={() => setDeletingId(null)}>Cancel</button><button type="button" onClick={() => erase(plan.id)}>Delete plan</button></div></div>}
             </article>;
           })}
@@ -125,6 +128,7 @@ export default function Dashboard() {
         </table></div>
         <p>Figures are shown in each plan's chosen currency; values in different currencies should not be compared directly.</p>
       </section>}
+      {requestingId && plans.find(p => p.id === requestingId) && <SubmitFinancingRequest plan={plans.find(p => p.id === requestingId)!} onClose={() => setRequestingId(null)}/>}
       <div className="saved-footnote">
         <div><span><Wallet size={18}/></span><p><strong>Saved on this device.</strong> Plans are stored in this browser, not in an online account. Clearing browser data will remove them. No contact or identity information is stored.</p></div>
         <Link href="/#calculator" className="inline-link">Explore the calculator <ArrowRight size={17}/></Link>
