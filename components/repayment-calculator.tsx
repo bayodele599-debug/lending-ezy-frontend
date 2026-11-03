@@ -111,7 +111,7 @@ export default function RepaymentCalculator() {
         <div className="cost-legend"><span><i className="legend-principal"/> Amount borrowed</span><span><i className="legend-interest"/> Interest</span></div>
         <div className="result-breakdown"><div><span>Amount borrowed</span><strong>{money(amount)}</strong></div><div><span>Estimated total interest</span><strong>{money(interest)}</strong></div><div className="result-total"><span>Estimated total repayment</span><strong>{money(total)}</strong></div></div>
         <div className="result-actions">
-          <button type="button" onClick={addComparison} className="button button-outline-dark"><Plus size={17}/> Add to comparison</button>
+          <button type="button" onClick={addComparison} className="button button-outline-dark"><Plus size={17}/> Add to comparison</button><Link href={"/apply?type=" + product + "&currency=" + currency + "&amount=" + amount + "&months=" + months + "&rate=" + rate} className="result-link">Save as plan <ArrowUpRight size={17}/></Link>
           <button type="button" onClick={() => setShowSchedule(value => !value)} className="result-link" aria-expanded={showSchedule}>{showSchedule ? "Hide" : "View"} repayment schedule <ArrowRight size={16}/></button>
         </div>
         {feedback && <p className="calculator-feedback" role="status">{feedback}</p>}
@@ -119,7 +119,7 @@ export default function RepaymentCalculator() {
       </div>
       {comparisons.length > 0 && <div className="comparison-section"><div className="comparison-heading"><h4>Compare scenarios</h4><button type="button" onClick={() => {setComparisons([]); setFeedback("");}}>Clear all</button></div><div className="comparison-grid">{comparisons.map(item => <div className="comparison-card" key={item.id}><button className="comparison-remove" type="button" aria-label="Remove scenario" onClick={() => setComparisons(current => current.filter(entry => entry.id !== item.id))}><X size={17}/></button><span>{item.currency} · {item.months} months · {item.rate}%</span><strong>{formatMoney(item.monthly, item.currency)}<small> / month</small></strong><p>Borrow {formatMoney(item.amount, item.currency)} · Total {formatMoney(item.total, item.currency)}</p></div>)}</div></div>}
       {showSchedule && <div className="schedule-section"><div className="schedule-heading"><div><h4>Repayment schedule</h4><p>Month-by-month breakdown based on your assumptions.</p></div><button type="button" className="button button-outline-dark" onClick={downloadSchedule}><Download size={17}/> Download CSV</button></div><div className="table-scroll"><table><thead><tr><th>Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead><tbody>{schedule.map(row => <tr key={row.month}><td>{row.month}</td><td>{money(row.payment)}</td><td>{money(row.principal)}</td><td>{money(row.interest)}</td><td>{money(row.balance)}</td></tr>)}</tbody></table></div></div>}
-      <div className="calculator-footer"><span>Want to know when borrowing options become available?</span><Link href="/join" className="inline-link">Register your interest <ArrowUpRight size={17}/></Link></div>
+      <div className="calculator-footer"><span>Want to return to these figures later?</span><Link href={"/apply?type=" + product + "&currency=" + currency + "&amount=" + amount + "&months=" + months + "&rate=" + rate} className="inline-link">Build a saved plan <ArrowUpRight size={17}/></Link></div>
     </div>
   );
 }

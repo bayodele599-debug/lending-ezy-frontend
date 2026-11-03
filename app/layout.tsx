@@ -25,9 +25,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               </Link>
               <p>A more considered way to explore borrowing, built around clearer information and better choices.</p>
             </div>
-            <div className="footer-column"><h2>Explore</h2><Link href="/personal">Personal borrowing</Link><Link href="/business">For businesses</Link><Link href="/#calculator">Repayment calculator</Link><Link href="/how-it-works">How it works</Link></div>
+            <div className="footer-column"><h2>Explore</h2><Link href="/personal">Personal borrowing</Link><Link href="/business">For businesses</Link><Link href="/apply">Build a plan</Link><Link href="/dashboard">My saved plans</Link><Link href="/#calculator">Repayment calculator</Link><Link href="/how-it-works">How it works</Link></div>
             <div className="footer-column"><h2>Lending Ezy</h2><Link href="/about">About us</Link><Link href="/partner">For lending partners</Link><Link href="/faq">Common questions</Link><Link href="/join">Get in touch</Link></div>
-            <div className="footer-column"><h2>Information</h2><Link href="/privacy">Privacy & data</Link><Link href="/terms">Website information</Link><p>Products and lending availability depend on your location and authorised providers.</p></div>
+            <div className="footer-column"><h2>Information</h2><Link href="/privacy">Privacy & data</Link><Link href="/terms">Website information</Link><p>Clear assumptions, considered decisions and tools that put your plans in your hands.</p></div>
           </div>
           <div className="container footer-bottom"><span>© {new Date().getFullYear()} Lending Ezy. All rights reserved.</span><span>Clear information. Considered decisions.</span></div>
         </footer>
