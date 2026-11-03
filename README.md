@@ -86,3 +86,28 @@ This design refresh preserves the working FastAPI/Next.js contracts, local plann
 - The Chromium responsive audit checks 132 viewport/route combinations, WCAG accessibility at key widths, sticky navigation, the interactive hero, planner journey, exports, and saved-plan integrity.
 
 Source photography is served from the same external photo sources already documented in this README. No image credits are placed over photography.
+
+
+## Private customer account workspace (optional, Nov 2026)
+
+When both the frontend server flags \`CUSTOMER_PORTAL_ENABLED\` and
+\`NEXT_PUBLIC_CUSTOMER_PORTAL_ENABLED\` are true and the FastAPI backend is
+running with \`CUSTOMER_ACCOUNTS_ENABLED=true\`, the following are available:
+
+- Customer registration, one-time email verification, login, password recovery,
+  14-day revocable HttpOnly-cookie sessions (cookie held only by Next.js proxy)
+- Durable account-based financial planning, create/edit/delete/export, and an
+  **explicit** import from existing browser-local scenarios
+- Account-linked financing request tracking, private admin/customer messages,
+  and optional generic email updates where SMTP is configured
+- Account page \`/account\`, email verification \`/account/verify\`, and
+  password reset \`/account/reset\`; none are indexed by search engines
+
+Existing browser-only My plans remains available without registration. An
+anonymous case is not automatically joined to an account on matching email.
+Do not enable accounts on Vercel until backend, SMTP, retention/privacy and
+applicant-status workflows have been reviewed and deployed securely.
+
+Local test: backend \`deploy/Start-LendingEzy.ps1\` now starts PostgreSQL and
+Mailpit (http://127.0.0.1:8025), FastAPI on 8000, customer on 3000 and admin
+on 3001. No external delivery occurs in local development.

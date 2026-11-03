@@ -1375,3 +1375,11 @@ body{background:#f8f8f4}
 @media(prefers-reduced-transparency:reduce),(prefers-contrast:more){
  .account-auth-card,.account-workspace-main,.account-profile,.account-availability{background:#fff}
 }
+
+
+.saved-account-prompt{display:flex;align-items:center;gap:16px;border:1px solid #bcd4bc;background:#ebf5e9;
+ padding:18px 22px;border-radius:15px;margin-bottom:25px;color:#28533a}
+.saved-account-prompt svg{flex:0 0 auto}
+.saved-account-prompt p{flex:1;font-size:12px;line-height:1.7;margin:0}
+.saved-account-prompt a{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;white-space:nowrap}
+@media(max-width:680px){.saved-account-prompt{flex-wrap:wrap}.saved-account-prompt a{width:100%}}

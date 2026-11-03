@@ -66,6 +66,8 @@ export default function Dashboard() {
       <Link className="button button-primary" href="/apply"><Plus size={18}/> Create a plan</Link>
     </div>
     <div className="container saved-body">
+      {(process.env.NEXT_PUBLIC_CUSTOMER_PORTAL_ENABLED==="true"||process.env.NODE_ENV==="development")&&
+       <div className="saved-account-prompt"><Wallet size={21}/><p><strong>Want to keep plans across devices?</strong> Sign in to a secure account and choose which browser plans to import. Your browser plans stay here unless you import them.</p><Link href="/account">Explore my account <ArrowUpRight size={16}/></Link></div>}
       <div className="saved-toolbar">
         <div>
           <span className="saved-eyebrow">YOUR SAVED SCENARIOS</span>
