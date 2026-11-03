@@ -6,7 +6,7 @@ const groups = [
   { title: "Planning & saved scenarios", items: [
     ["How do I start a financing plan?", "Select Get started, choose personal or business, add your country and financing goal, then adjust the figures to suit your plans."],
     ["Can I save more than one plan?", "Yes. You can save up to 25 plans on this device, edit them, make a copy, delete them and select up to three for side-by-side comparison."],
-    ["Where are my plans saved?", "Plans are saved in your browser on the device you're using. They are not synced to an online account. Clearing browser data removes them."],
+    ["Where are my plans saved?", "Plans in My plans are saved on this browser only. If customer accounts are enabled, you can create account plans or choose to import browser plans. They are not synced automatically."],
     ["Can I use a different currency?", "Yes. Choose from the currencies in the calculator or planner. Switching currencies changes the unit shown; it does not convert the amount."],
     ["Is a saved plan a loan application?", "No. A saved plan is a private repayment estimate. It does not mean a loan has been applied for, approved or offered."]
   ]},
@@ -19,6 +19,7 @@ const groups = [
   ]},
   { title: "Privacy & partnerships", items: [
     ["What information is saved on my device?", "Your saved plans contain financing assumptions only: purpose, country, currency, amount, term and assumed rate. They do not contain identity documents, passwords or bank details."],
+    ["Can I see request progress or message the team?", "When secure customer accounts are enabled, requests submitted while signed in appear in your account along with customer-visible messages. A request submitted anonymously is not automatically attached to a new account."],
     ["Can a lending institution contact Lending Ezy?", "Visit Get in touch to explore potential partnerships and institution-specific requirements."],
     ["Is lending available in every country?", "No single financial product is available in every market. Any lending service needs the appropriate local provider, authorisations and applicable disclosures."]
   ]}

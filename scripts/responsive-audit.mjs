@@ -6,7 +6,7 @@ import { mkdir } from "node:fs/promises";
 
 const baseURL = process.env.BASE_URL || "http://127.0.0.1:3000";
 const widths = [320, 360, 390, 430, 650, 768, 900, 1024, 1280, 1440, 1920];
-const routes = ["/", "/personal", "/business", "/how-it-works", "/about", "/faq", "/partner", "/join", "/apply", "/dashboard", "/privacy", "/terms"];
+const routes = ["/", "/personal", "/business", "/how-it-works", "/about", "/faq", "/partner", "/join", "/apply", "/dashboard", "/privacy", "/terms", "/account"];
 const captures = new Set([320, 390, 768, 1440]);
 const failures = [];
 const warnings = [];
@@ -97,7 +97,7 @@ for (const width of widths) {
           const href = link.getAttribute("href");
           if (!href || href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("https://")) return false;
           const url = new URL(href, location.href);
-          const valid = new Set(["/", "/apply", "/dashboard", "/personal", "/business", "/about", "/partner", "/faq", "/how-it-works", "/join", "/privacy", "/terms"]);
+          const valid = new Set(["/", "/apply", "/dashboard", "/personal", "/business", "/about", "/partner", "/faq", "/how-it-works", "/join", "/privacy", "/terms", "/account"]);
           const routeExists = valid.has(url.pathname);
           const anchorExists = !url.hash || (url.pathname !== location.pathname) || document.getElementById(decodeURIComponent(url.hash.slice(1))) !== null;
           return !routeExists || !anchorExists;
@@ -122,7 +122,7 @@ for (const width of widths) {
 
       if (["/", "/personal", "/business"].includes(route)) {
         await page.evaluate(() => window.scrollTo(0, 640));
-        await page.waitForTimeout(100);
+        await page.waitForFunction(() => window.scrollY < 28 || document.querySelector(".site-header")?.classList.contains("is-scrolled"), null, {timeout: 2500}).catch(() => {});
         const headerAtScroll = await page.locator(".site-header").evaluate(el => ({
           top: el.getBoundingClientRect().top,
           compact: el.classList.contains("is-scrolled")

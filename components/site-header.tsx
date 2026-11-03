@@ -10,7 +10,9 @@ const links = [
   { href: "/business", label: "Business" },
   { href: "/how-it-works", label: "How it works" },
   { href: "/about", label: "About" },
-  { href: "/dashboard", label: "My plans" }
+  { href: "/dashboard", label: "My plans" },
+  ...(process.env.NEXT_PUBLIC_CUSTOMER_PORTAL_ENABLED==="true"||process.env.NODE_ENV==="development"
+    ? [{href:"/account",label:"Account"}] : [])
 ];
 
 export default function SiteHeader() {
