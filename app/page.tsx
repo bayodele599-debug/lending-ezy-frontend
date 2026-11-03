@@ -26,7 +26,7 @@ export default function Home() {
             </div>
             <p className="hero-disclaimer">A clearer starting point for your next financial decision.</p>
           </div>
-          <div className="hero-editorial" aria-label="Three principles behind Lending Ezy">
+          <div className="hero-editorial" role="group" aria-label="Three principles behind Lending Ezy">
             <div className="editorial-top"><span>THE LENDING EZY APPROACH</span><span>01 — 03</span></div>
             <div className="editorial-monogram" aria-hidden="true"><span>le</span><i>.</i></div>
             <div className="editorial-bottom">

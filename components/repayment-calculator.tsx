@@ -90,7 +90,7 @@ export default function RepaymentCalculator({initialProduct = "personal"}: {init
         <p className="result-subtitle">Estimated monthly payment</p>
         <div className="result-amount" aria-live="polite">{money(monthly)}</div>
         <p className="result-term">Over {months} months at an assumed {rate}% annual interest rate</p>
-        <div className="cost-bar" aria-label="Principal and estimated interest as portions of total repayment"><span style={{width: (total > 0 ? amount / total * 100 : 100) + "%"}}/><span/></div>
+        <div className="cost-bar" role="img" aria-label="Principal and estimated interest as portions of total repayment"><span style={{width: (total > 0 ? amount / total * 100 : 100) + "%"}}/><span/></div>
         <div className="cost-legend"><span><i className="legend-principal"/> Amount borrowed</span><span><i className="legend-interest"/> Interest</span></div>
         <div className="result-breakdown"><div><span>Amount borrowed</span><strong>{money(amount)}</strong></div><div><span>Estimated total interest</span><strong>{money(interest)}</strong></div><div className="result-total"><span>Estimated total repayment</span><strong>{money(total)}</strong></div></div>
         <div className="result-actions">

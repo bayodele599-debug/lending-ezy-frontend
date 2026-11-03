@@ -67,7 +67,7 @@ for (const width of widths) {
           const url = new URL(href, location.href);
           const valid = new Set(["/", "/apply", "/dashboard", "/personal", "/business", "/about", "/partner", "/faq", "/how-it-works", "/join", "/privacy", "/terms"]);
           const routeExists = valid.has(url.pathname);
-          const anchorExists = !url.hash || (url.pathname !== location.pathname && url.pathname !== "/") || document.getElementById(decodeURIComponent(url.hash.slice(1))) !== null;
+          const anchorExists = !url.hash || (url.pathname !== location.pathname) || document.getElementById(decodeURIComponent(url.hash.slice(1))) !== null;
           return !routeExists || !anchorExists;
         }).map(link => link.getAttribute("href")).slice(0, 10);
         return { h1, title, broken };
@@ -79,7 +79,10 @@ for (const width of widths) {
         try {
           const report = await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa"]).analyze();
           const important = report.violations.filter(v => v.impact === "critical" || v.impact === "serious");
-          if (important.length) failures.push(width + " " + route + " accessibility issues: " + important.map(v => v.id + " (" + v.nodes.length + ")").join(", "));
+          if (important.length) failures.push(width + " " + route + " accessibility issues: " + JSON.stringify(important.map(v => ({
+            id:v.id,
+            nodes:v.nodes.slice(0,15).map(n => ({selector:n.target.join(" "),summary:n.failureSummary?.slice(0,220)}))
+          }))));
         } catch (e) {
           failures.push(width + " " + route + " accessibility audit failed: " + String(e));
         }
