@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, ArrowRight, SlidersHorizontal, MoveUpRight } from "lucide-react";
+import { ArrowUpRight, SlidersHorizontal } from "lucide-react";
 import PhotoFrame from "./photo-frame";
 import { defaultPlan, money, summary } from "../lib/plans";
 
@@ -32,9 +32,7 @@ export default function HeroPlanPreview() {
           sizes="(max-width: 760px) 90vw, (max-width: 1200px) 44vw, 500px"
           priority
         />
-        <div className="hero-portrait-label" aria-hidden="true">
-          <span>More than numbers.</span><MoveUpRight size={15}/>
-        </div>
+
       </div>
 
       <div className="hero-snapshot">
@@ -80,7 +78,7 @@ export default function HeroPlanPreview() {
           </Link>
         </div>
       </div>
-      <Link href="/how-it-works" className="hero-composition-foot">Built for thoughtful decisions <ArrowRight size={15}/></Link>
+
     </div>
   );
 }
