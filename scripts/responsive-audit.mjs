@@ -317,7 +317,12 @@ for (const {width, height} of [
       await purpose.selectOption("Education");
       await page.getByRole("button",{name:"Continue"}).click();
       if(await term.inputValue()!=="24")throw new Error("Changing from mortgage did not restore short-term default");
-      console.log("PASS mortgage purpose and term switching");
+      await page.getByRole("button",{name:"Back"}).click();
+      await purpose.selectOption("Home purchase & mortgage");
+      await page.getByRole("button",{name:"Business",exact:true}).click();
+      await page.getByRole("button",{name:"Continue"}).click();
+      if(await term.inputValue()!=="36")throw new Error("Changing from personal mortgage to business did not restore compatible terms");
+      console.log("PASS mortgage purpose, term and borrower-type switching");
     }catch(error){failures.push("Mortgage purpose flow "+String(error))}
   }
   await context.close();
