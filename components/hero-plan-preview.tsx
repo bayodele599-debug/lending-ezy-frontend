@@ -25,10 +25,10 @@ export default function HeroPlanPreview() {
       <div className="hero-portrait-wrap">
         <PhotoFrame
           className="hero-portrait"
-          src="https://images.unsplash.com/photo-1739300293091-6e187cdf4b2c?auto=format&fit=crop&w=1200&q=82"
-          alt="A woman taking time to work through her plans at a cafe"
-          credit="Ninthgrid"
-          creditHref="https://unsplash.com/photos/J-IBERCeDTY"
+          src="https://images.pexels.com/photos/6963857/pexels-photo-6963857.jpeg?auto=compress&cs=tinysrgb&w=1200"
+          alt="A woman comparing household expenses with a laptop and calculator"
+          credit="Mikhail Nilov"
+          creditHref="https://www.pexels.com/photo/couple-people-woman-desk-6963857/"
           sizes="(max-width: 760px) 90vw, (max-width: 1200px) 44vw, 500px"
           priority
         />
