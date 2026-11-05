@@ -319,7 +319,7 @@ for (const {width, height} of [
       if(await term.inputValue()!=="24")throw new Error("Changing from mortgage did not restore short-term default");
       await page.getByRole("button",{name:"Back"}).click();
       await purpose.selectOption("Home purchase & mortgage");
-      await page.getByRole("button",{name:"Business",exact:true}).click();
+      await page.getByRole("group",{name:"Financing type"}).getByRole("button",{name:/^Business/}).click();
       await page.getByRole("button",{name:"Continue"}).click();
       if(await term.inputValue()!=="36")throw new Error("Changing from personal mortgage to business did not restore compatible terms");
       console.log("PASS mortgage purpose, term and borrower-type switching");
