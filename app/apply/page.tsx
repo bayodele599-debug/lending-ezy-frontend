@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Info, LockKeyhole, SlidersHorizontal } from "lucide-react";
 import { countries } from "../../lib/countries";
 import {
-  businessPurposes, defaultPlan, money, personalPurposes, repaymentTerms,
+  businessPurposes, defaultPlan, money, personalPurposes, termsForPurpose,
   savePlan, readPlans, summary, supportedCurrencies, validPlan,
   type PlanInput, type BorrowerType
 } from "../../lib/plans";
@@ -41,13 +41,17 @@ export default function Apply() {
       const rate = Number(params.get("rate"));
       const currency = params.get("currency");
       const allowedCurrency = supportedCurrencies.find(x => x === currency);
+      const purposes = type === "business" ? businessPurposes : personalPurposes;
+      const requestedPurpose = params.get("purpose");
+      const purpose = requestedPurpose && purposes.includes(requestedPurpose) ? requestedPurpose : purposes[0];
+      const availableTerms = termsForPurpose(purpose);
       setPlan(old => ({
         ...old,
         type,
-        purpose: type === "business" ? businessPurposes[0] : personalPurposes[0],
+        purpose,
         amount: params.has("amount") && Number.isFinite(amount) && amount >= 500 && amount <= 10000000
           ? amount : type === "business" ? 60000 : 12000,
-        months: repaymentTerms.find(x => x === months) ?? (type === "business" ? 36 : 24),
+        months: availableTerms.find(x => x === months) ?? (purpose === "Home purchase & mortgage" ? 240 : type === "business" ? 36 : 24),
         annualRate: params.has("rate") && Number.isFinite(rate) && rate >= 0 && rate <= 40 ? rate : 12,
         currency: allowedCurrency ?? "USD"
       }));
@@ -69,7 +73,13 @@ export default function Apply() {
 
   function update<K extends keyof PlanInput>(key: K, value: PlanInput[K]) {
     setError("");
-    setPlan(current => ({...current, [key]: value}));
+    setPlan(current => {
+      if (key === "purpose" && typeof value === "string") {
+        const options = termsForPurpose(value);
+        return {...current, purpose: value, months: options.some(term => term === current.months) ? current.months : value === "Home purchase & mortgage" ? 240 : 24};
+      }
+      return {...current, [key]: value};
+    });
   }
 
   function chooseType(type: BorrowerType) {
@@ -168,7 +178,7 @@ export default function Apply() {
                   </label>
                   <label className="planner-field"><span>Repayment term</span>
                     <select value={plan.months} onChange={event => update("months", Number(event.target.value))}>
-                      {repaymentTerms.map(item => <option key={item} value={item}>{item} months</option>)}
+                      {termsForPurpose(plan.purpose).map(item => <option key={item} value={item}>{item >= 12 && item % 12 === 0 ? `${item / 12} ${item === 12 ? "year" : "years"}` : `${item} months`}</option>)}
                     </select>
                   </label>
                   <label className="planner-field"><span>Financing amount ({plan.currency})</span>
@@ -180,7 +190,7 @@ export default function Apply() {
                 </div>
                 <div className="planner-range-label"><span>Adjust amount</span><strong>{money(plan.amount || 0, plan.currency)}</strong></div>
                 <input className="planner-range" type="range" min={500} max={plan.amount > 250000 ? 10000000 : 250000} step={plan.amount > 250000 ? 10000 : 500} aria-label="Adjust financing amount" value={Math.min(plan.amount > 250000 ? 10000000 : 250000, Math.max(500, plan.amount))} onChange={event => update("amount", Number(event.target.value))}/>
-                <div className="planner-interest-note"><Info size={18}/><span>The interest rate is an assumption you control, not a lender's quoted rate. Choosing a currency does not convert exchange rates.</span></div>
+                <div className="planner-interest-note"><Info size={18}/><span>The interest rate is an assumption you control, not a lender's quoted rate. Choosing a currency does not convert exchange rates. Mortgage illustrations exclude property taxes, insurance, closing costs and other charges.</span></div>
               </div>}
               {step === 2 && <div className="planner-panel">
                 <p className="overline">03 / Review & save</p>
