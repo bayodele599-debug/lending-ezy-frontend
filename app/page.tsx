@@ -3,6 +3,7 @@ import { ArrowRight, ArrowUpRight, Check, ChevronRight, CircleHelp, Globe2, Move
 import RepaymentCalculator from "../components/repayment-calculator";
 import HeroPlanPreview from "../components/hero-plan-preview";
 import PhotoFrame from "../components/photo-frame";
+import FinancingPaths from "../components/financing-paths";
 import Reveal from "../components/reveal";
 
 const questions = [
@@ -46,7 +47,7 @@ export default function Home() {
             <Link href="/apply?type=personal" className="product-tile product-tile-personal">
               <div className="tile-top"><span>01 / FOR INDIVIDUALS</span><ArrowUpRight size={25}/></div>
               <div className="tile-media">
-                <PhotoFrame className="tile-photo" src="https://images.unsplash.com/photo-1739300293091-6e187cdf4b2c?auto=format&fit=crop&w=1200&q=82" alt="A woman working thoughtfully on a laptop" credit="Ninthgrid" creditHref="https://unsplash.com/photos/J-IBERCeDTY" sizes="(max-width: 760px) 94vw, 43vw"/>
+                <PhotoFrame className="tile-photo" src="https://images.pexels.com/photos/6962992/pexels-photo-6962992.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Woman reviewing her household budget using a calculator" credit="Mikhail Nilov" creditHref="https://www.pexels.com/photo/woman-budgeting-her-bills-6962992/" sizes="(max-width: 760px) 94vw, 43vw"/>
                 <span className="tile-media-label">A plan for the moments that matter <ArrowUpRight size={16}/></span>
               </div>
               <div><h3>Personal borrowing</h3><p>Make sense of repayments for the things that matter to you.</p><span className="tile-link">Start a personal plan <ArrowRight size={18}/></span></div>
@@ -60,6 +61,7 @@ export default function Home() {
               <div><h3>Business borrowing</h3><p>Plan ahead with clearer figures for your next business decision.</p><span className="tile-link">Start a business plan <ArrowRight size={18}/></span></div>
             </Link>
           </Reveal>
+          <FinancingPaths/>
         </div>
       </section>
 
@@ -67,16 +69,16 @@ export default function Home() {
         <div className="container photo-story-grid">
           <PhotoFrame
             className="photo-story-frame"
-            src="https://images.unsplash.com/photo-1739303987875-db274ba45b60?auto=format&fit=crop&w=1600&q=82"
-            alt="Two women sharing a cheerful moment across a café table"
-            credit="Ninthgrid"
-            creditHref="https://unsplash.com/photos/AB04SBsdHjY"
+            src="https://images.pexels.com/photos/8293700/pexels-photo-8293700.jpeg?auto=compress&cs=tinysrgb&w=1500"
+            alt="A couple smiling and showing the keys to their new home"
+            credit="RDNE Stock project"
+            creditHref="https://www.pexels.com/photo/happy-couple-holding-and-showing-a-house-key-8293700/"
             sizes="(max-width: 900px) 100vw, 58vw"
           />
           <Reveal className="photo-story-copy" delay={0.12}>
-            <p className="overline">The human side of money</p>
+            <p className="overline">Beyond the numbers</p>
             <h2 id="photo-story-heading">Behind every number, <em>there's a story.</em></h2>
-            <p>Life isn't lived in spreadsheets. There are plans to make, people to support and decisions worth thinking through. We're here to make the numbers easier to understand.</p>
+            <p>A first home. A new vehicle. The next year of study. Every goal comes with real costs and real choices. Explore the figures before making a commitment.</p>
             <Link href="/how-it-works" className="inline-link">Our approach to borrowing <ArrowUpRight size={17}/></Link>
           </Reveal>
         </div>
