@@ -293,6 +293,44 @@ for (const {width, height} of [
         if(!m.tile||m.tile.height>525)
           failures.push(`${width}x${height} homepage primary product cards too tall: ${JSON.stringify(m.tile)}`);
       }
+
+      // Prevent the visually broken layouts reported by real browser screenshots:
+      // a calculator obscuring most of the photograph and editorial notes hiding faces.
+      if(route==="/" && width>=1280){
+        const visual=await page.evaluate(()=>{
+          const photo=document.querySelector(".hero-portrait-wrap")?.getBoundingClientRect();
+          const card=document.querySelector(".hero-snapshot")?.getBoundingClientRect();
+          if(!photo||!card)return null;
+          const x=Math.max(0,Math.min(photo.right,card.right)-Math.max(photo.left,card.left));
+          const y=Math.max(0,Math.min(photo.bottom,card.bottom)-Math.max(photo.top,card.top));
+          return {photoWidth:photo.width,cardWidth:card.width,coveredFraction:x*y/(photo.width*photo.height)};
+        });
+        if(!visual||visual.coveredFraction>0.08)
+          failures.push(`${width}x${height} homepage calculator obscures photograph: ${JSON.stringify(visual)}`);
+      }
+      if(route==="/personal"||route==="/business"){
+        const editorial=await page.evaluate(()=>{
+          const photo=document.querySelector(".inner-hero-photo")?.getBoundingClientRect();
+          const note=document.querySelector(".photo-aside-note")?.getBoundingClientRect();
+          const hero=document.querySelector(".inner-hero")?.getBoundingClientRect();
+          const next=document.querySelector(".borrowing-guidance-section .section-heading-row")?.getBoundingClientRect();
+          return {photoBottom:photo?.bottom??0,noteTop:note?.top??0,gap:next&&hero?next.top-hero.bottom:null};
+        });
+        if(editorial.noteTop<editorial.photoBottom-3)
+          failures.push(`${width}x${height} ${route} caption covers person: ${JSON.stringify(editorial)}`);
+        if(editorial.gap!==null&&editorial.gap>74)
+          failures.push(`${width}x${height} ${route} excessive blank transition gap: ${JSON.stringify(editorial)}`);
+      }
+      if(route==="/" && width>=1280){
+        const gap=await page.evaluate(()=>{
+          const hero=document.querySelector(".hero")?.getBoundingClientRect();
+          const content=document.querySelector(".intro-layout")?.getBoundingClientRect();
+          return hero&&content?content.top-hero.bottom:null;
+        });
+        if(gap!==null&&gap>78)
+          failures.push(`${width}x${height} homepage intro begins too far down: ${gap}px`);
+      }
+
       if(route==="/apply"&&width>=1024&&(!m.planner||m.planner.top>height*0.77))
         failures.push(`${width}x${height} /apply form begins too far down: ${JSON.stringify(m.planner)}`);
       if((route==="/personal"||route==="/business")&&width>=1024&&(!m.photo||m.photo.height>470))
