@@ -111,3 +111,18 @@ applicant-status workflows have been reviewed and deployed securely.
 Local test: backend \`deploy/Start-LendingEzy.ps1\` now starts PostgreSQL and
 Mailpit (http://127.0.0.1:8025), FastAPI on 8000, customer on 3000 and admin
 on 3001. No external delivery occurs in local development.
+
+## Lending-purpose imagery and planner presets (Nov 2026)
+The homepage offers personal and business planning plus housing/mortgage, vehicle, education, unexpected-expense and consolidation scenarios. These are illustrative repayment plans, not lender products or financing offers. Direct category links preselect the corresponding purpose in /apply. Housing illustrations support 5–30 years, with a note excluding escrow, insurance, property taxes and other fees. Other scenarios remain short-term; historical browser plans stay intact.
+
+Pexels free-to-use photography (served by images.pexels.com and subject to third-party availability):
+- Hero — Mikhail Nilov: https://www.pexels.com/photo/couple-people-woman-desk-6963857/
+- Personal — Mikhail Nilov: https://www.pexels.com/photo/woman-budgeting-her-bills-6962992/
+- Housing — Kampus Production: https://www.pexels.com/photo/a-couple-receiving-keys-from-a-broker-8730048/
+- Auto — Antoni Shkraba: https://www.pexels.com/photo/photo-of-a-woman-getting-a-car-key-7144201/
+- Education — Mikhail Nilov: https://www.pexels.com/photo/college-students-with-laptops-inside-the-library-7777691/
+- Emergency — Kaboompics: https://www.pexels.com/photo/woman-doing-accounting-from-home-5900033/
+- Debt consolidation — Mikhail Nilov: https://www.pexels.com/photo/couple-people-woman-hand-6963017/
+- Story photo — RDNE Stock project: https://www.pexels.com/photo/happy-couple-holding-and-showing-a-house-key-8293700/
+
+All plans exclude fees, property taxes, insurance and other lender- and market-specific charges. They do not constitute loan applications, credit approvals or mortgage offers.

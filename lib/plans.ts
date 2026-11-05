@@ -26,8 +26,11 @@ export type PaymentRow = {
 
 export const PLAN_STORAGE_KEY = "lending-ezy-plans-v1";
 export const supportedCurrencies = ["USD", "GBP", "EUR", "CAD", "AUD", "SGD", "NGN", "ZAR", "INR", "AED", "KES", "GHS"] as const;
-export const repaymentTerms = [6, 12, 18, 24, 36, 48, 60] as const;
-export const personalPurposes = ["Home & living", "Education", "Car & transport", "Family & life events", "Debt consolidation", "Other"];
+export const shortRepaymentTerms = [6, 12, 18, 24, 36, 48, 60] as const;
+export const mortgageRepaymentTerms = [60, 120, 180, 240, 300, 360] as const;
+export const repaymentTerms = [...shortRepaymentTerms, 120, 180, 240, 300, 360] as const;
+export const termsForPurpose = (purpose: string) => purpose === "Home purchase & mortgage" ? mortgageRepaymentTerms : shortRepaymentTerms;
+export const personalPurposes = ["Home & living", "Home purchase & mortgage", "Home improvement", "Education", "Car & transport", "Emergency expenses", "Family & life events", "Debt consolidation", "Other"];
 export const businessPurposes = ["Working capital", "Equipment", "Expansion", "Inventory", "Cash flow", "Other"];
 
 export const defaultPlan: PlanInput = {
@@ -49,7 +52,7 @@ export function money(value: number, currency: string): string {
 
 export function amortization(amount: number, annualRate: number, months: number): PaymentRow[] {
   if (!(amount > 0) || !Number.isFinite(amount) || !Number.isFinite(annualRate) ||
-      annualRate < 0 || annualRate > 40 || !Number.isInteger(months) || months < 1 || months > 60) return [];
+      annualRate < 0 || annualRate > 40 || !Number.isInteger(months) || months < 1 || months > 360) return [];
   const rate = annualRate / 1200;
   const payment = rate ? amount * rate / (1 - Math.pow(1 + rate, -months)) : amount / months;
   let balance = roundMoney(amount);
@@ -83,7 +86,7 @@ export function validPlan(value: unknown): value is PlanInput {
     typeof p.country === "string" && /^[A-Z]{2}$/.test(p.country) &&
     typeof p.currency === "string" && supportedCurrencies.some(x => x === p.currency) &&
     typeof p.amount === "number" && Number.isFinite(p.amount) && p.amount >= 500 && p.amount <= 10000000 &&
-    typeof p.months === "number" && repaymentTerms.some(x => x === p.months) &&
+    typeof p.months === "number" && termsForPurpose(p.purpose as string).some(x => x === p.months) &&
     typeof p.annualRate === "number" && Number.isFinite(p.annualRate) && p.annualRate >= 0 && p.annualRate <= 40;
 }
 

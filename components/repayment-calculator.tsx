@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import {amortization, roundMoney, money as formatMoney, supportedCurrencies, repaymentTerms} from "../lib/plans";
+import {amortization, roundMoney, money as formatMoney, supportedCurrencies, shortRepaymentTerms} from "../lib/plans";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Download, Info, Plus, RotateCcw, X } from "lucide-react";
 
@@ -73,7 +73,7 @@ export default function RepaymentCalculator({initialProduct = "personal"}: {init
         </div>
         <div className="form-row">
           <label className="form-field"><span>Currency</span><select value={currency} onChange={event => setCurrency(event.target.value)}>{supportedCurrencies.map(option => <option key={option} value={option}>{option}</option>)}</select></label>
-          <label className="form-field"><span>Repayment period</span><select value={months} onChange={event => setMonths(Number(event.target.value))}>{repaymentTerms.map(option => <option key={option} value={option}>{option} months</option>)}</select></label>
+          <label className="form-field"><span>Repayment period</span><select value={months} onChange={event => setMonths(Number(event.target.value))}>{shortRepaymentTerms.map(option => <option key={option} value={option}>{option} months</option>)}</select></label>
         </div>
         <div className="amount-heading"><label htmlFor="loan-amount">Amount to borrow</label><span>{money(amount)}</span></div>
         <input id="loan-amount" className="amount-range" type="range" min="500" max={sliderMax} step={500} value={Math.min(sliderMax, Math.max(500, amount))} onChange={event => setAmount(Number(event.target.value))}/>
