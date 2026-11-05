@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, ArrowRight, SlidersHorizontal, MoveUpRight } from "lucide-react";
+import { ArrowUpRight, SlidersHorizontal } from "lucide-react";
 import PhotoFrame from "./photo-frame";
 import { defaultPlan, money, summary } from "../lib/plans";
 
@@ -25,16 +25,14 @@ export default function HeroPlanPreview() {
       <div className="hero-portrait-wrap">
         <PhotoFrame
           className="hero-portrait"
-          src="https://images.pexels.com/photos/6963857/pexels-photo-6963857.jpeg?auto=compress&cs=tinysrgb&w=1200"
-          alt="A woman comparing household expenses with a laptop and calculator"
-          credit="Mikhail Nilov"
-          creditHref="https://www.pexels.com/photo/couple-people-woman-desk-6963857/"
+          src="https://images.pexels.com/photos/7491011/pexels-photo-7491011.jpeg?auto=compress&cs=tinysrgb&w=1400"
+          alt="Woman planning a household budget using a calculator and notebook"
+          credit="RDNE Stock project"
+          creditHref="https://www.pexels.com/photo/woman-uses-calculator-7491011/"
           sizes="(max-width: 760px) 90vw, (max-width: 1200px) 44vw, 500px"
           priority
         />
-        <div className="hero-portrait-label" aria-hidden="true">
-          <span>More than numbers.</span><MoveUpRight size={15}/>
-        </div>
+
       </div>
 
       <div className="hero-snapshot">
@@ -80,7 +78,7 @@ export default function HeroPlanPreview() {
           </Link>
         </div>
       </div>
-      <Link href="/how-it-works" className="hero-composition-foot">Built for thoughtful decisions <ArrowRight size={15}/></Link>
+
     </div>
   );
 }
