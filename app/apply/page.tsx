@@ -83,10 +83,15 @@ export default function Apply() {
   }
 
   function chooseType(type: BorrowerType) {
-    setPlan(current => ({
-      ...current, type, purpose: type === "business" ? businessPurposes[0] : personalPurposes[0],
-      amount: type === "business" && current.type !== type ? 60000 : type === "personal" && current.type !== type ? 12000 : current.amount
-    }));
+    setPlan(current => {
+      const purpose = type === "business" ? businessPurposes[0] : personalPurposes[0];
+      const allowed = termsForPurpose(purpose);
+      return {
+        ...current, type, purpose,
+        months: allowed.some(term => term === current.months) ? current.months : type === "business" ? 36 : 24,
+        amount: type === "business" && current.type !== type ? 60000 : type === "personal" && current.type !== type ? 12000 : current.amount
+      };
+    });
     setError("");
   }
 

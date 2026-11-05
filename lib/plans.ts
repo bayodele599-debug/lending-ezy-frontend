@@ -82,6 +82,7 @@ export function validPlan(value: unknown): value is PlanInput {
   if (!value || typeof value !== "object") return false;
   const p = value as Record<string, unknown>;
   return (p.type === "personal" || p.type === "business") &&
+    !(p.type === "business" && p.purpose === "Home purchase & mortgage") &&
     typeof p.purpose === "string" && p.purpose.length > 0 && p.purpose.length <= 80 &&
     typeof p.country === "string" && /^[A-Z]{2}$/.test(p.country) &&
     typeof p.currency === "string" && supportedCurrencies.some(x => x === p.currency) &&

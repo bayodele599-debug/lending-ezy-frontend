@@ -256,6 +256,78 @@ for (const width of widths) {
   }
   await context.close();
 }
+
+// Additional visual geometry checks at realistic browser heights and zoom-equivalent viewports.
+// The earlier smoke suite used a 900px viewport, which masked excessively tall headings,
+// late-starting forms and cut-off actions on typical laptop screens.
+for (const {width, height} of [
+  {width:1440,height:800}, {width:1280,height:720},
+  {width:1024,height:700}, {width:390,height:760}
+]) {
+  const context = await browser.newContext({
+    viewport:{width,height},deviceScaleFactor:1,reducedMotion:"reduce"
+  });
+  const page = await context.newPage();
+  for(const route of ["/","/personal","/business","/about","/how-it-works","/faq","/partner","/join","/apply","/dashboard","/privacy","/terms","/account"]){
+    try {
+      await page.goto(baseURL+route,{waitUntil:"domcontentloaded",timeout:35000});
+      await page.locator("#main-content h1").first().waitFor({timeout:12000});
+      const m=await page.evaluate(()=>{
+        const rect=sel=>{const e=document.querySelector(sel);const r=e?.getBoundingClientRect();return r?{top:r.top,bottom:r.bottom,width:r.width,height:r.height}:null};
+        return {
+          header:rect(".site-header"),heading:rect("#main-content h1"),
+          headingSize:parseFloat(getComputedStyle(document.querySelector("#main-content h1")).fontSize),
+          hero:rect(".hero"),action:rect(".hero-actions .button"),
+          planner:rect(".planner-shell"),photo:rect(".inner-hero-photo"),
+          tile:rect(".product-grid .product-tile"),scrollWidth:document.documentElement.scrollWidth
+        };
+      });
+      if(m.scrollWidth>width+2)failures.push(`${width}x${height} ${route} horizontally overflows ${m.scrollWidth-width}px`);
+      if(!m.header||!m.heading||m.heading.top<m.header.bottom-2)
+        failures.push(`${width}x${height} ${route} title obscured by nav: ${JSON.stringify(m)}`);
+      if(width>=1024 && m.headingSize>80)
+        failures.push(`${width}x${height} ${route} oversized title ${m.headingSize}px`);
+      if(route==="/" && width>=1024){
+        if(!m.action||m.action.bottom>height-45)
+          failures.push(`${width}x${height} homepage primary action below fold: ${JSON.stringify(m.action)}`);
+        if(!m.tile||m.tile.height>525)
+          failures.push(`${width}x${height} homepage primary product cards too tall: ${JSON.stringify(m.tile)}`);
+      }
+      if(route==="/apply"&&width>=1024&&(!m.planner||m.planner.top>height*0.77))
+        failures.push(`${width}x${height} /apply form begins too far down: ${JSON.stringify(m.planner)}`);
+      if((route==="/personal"||route==="/business")&&width>=1024&&(!m.photo||m.photo.height>470))
+        failures.push(`${width}x${height} ${route} photo dominates first screen: ${JSON.stringify(m.photo)}`);
+      if(width===1440 && ["/","/personal","/business","/apply"].includes(route)){
+        const file=route==="/"? "home":route.slice(1);
+        await page.screenshot({path:`responsive-screenshots/first-fold-${file}-1440x800.png`,animations:"disabled"});
+      }
+      console.log(`FIRST-FOLD ${width}x${height} ${route}: h1=${m.headingSize}, headingTop=${Math.round(m.heading.top)}, formTop=${Math.round(m.planner?.top??-1)}`);
+    }catch(error){failures.push(`${width}x${height} ${route} first-fold audit: ${String(error)}`)}
+  }
+  if(width===1440){
+    try {
+      await page.goto(baseURL+"/apply?type=personal&purpose=Home%20purchase%20%26%20mortgage&months=240",{waitUntil:"domcontentloaded"});
+      const purpose=page.getByLabel("What is the financing for?");
+      await purpose.waitFor();
+      if(await purpose.inputValue()!=="Home purchase & mortgage")throw new Error("Mortgage purpose preset not selected");
+      await page.getByRole("button",{name:"Continue"}).click();
+      const term=page.getByLabel("Repayment term");
+      if(await term.inputValue()!=="240")throw new Error("Mortgage 20-year term did not carry through");
+      await page.getByRole("button",{name:"Back"}).click();
+      await purpose.selectOption("Education");
+      await page.getByRole("button",{name:"Continue"}).click();
+      if(await term.inputValue()!=="24")throw new Error("Changing from mortgage did not restore short-term default");
+      await page.getByRole("button",{name:"Back"}).click();
+      await purpose.selectOption("Home purchase & mortgage");
+      await page.getByRole("group",{name:"Financing type"}).getByRole("button",{name:/^Business/}).click();
+      await page.getByRole("button",{name:"Continue"}).click();
+      if(await term.inputValue()!=="36")throw new Error("Changing from personal mortgage to business did not restore compatible terms");
+      console.log("PASS mortgage purpose, term and borrower-type switching");
+    }catch(error){failures.push("Mortgage purpose flow "+String(error))}
+  }
+  await context.close();
+}
+
 await browser.close();
 for (const item of warnings) console.warn("WARN " + item);
 for (const item of failures) console.error("FAIL " + item);

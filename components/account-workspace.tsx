@@ -4,7 +4,7 @@ import {useCallback,useEffect,useState,type FormEvent} from "react";
 import Link from "next/link";
 import {ArrowRight,ArrowUpRight,CheckCircle2,Download,FileText,LockKeyhole,LogOut,Mail,MessageSquare,Plus,ShieldCheck,Trash2,UploadCloud,Wallet} from "lucide-react";
 import {countries} from "../lib/countries";
-import {defaultPlan,downloadSchedule,money,readPlans,savePlan,summary,supportedCurrencies,repaymentTerms,validPlan,type PlanInput,type SavedPlan} from "../lib/plans";
+import {defaultPlan,downloadSchedule,money,readPlans,savePlan,summary,supportedCurrencies,termsForPurpose,businessPurposes,validPlan,type PlanInput,type SavedPlan} from "../lib/plans";
 import SubmitFinancingRequest,{requestIntakeEnabled} from "./submit-financing-request";
 
 const enabled=process.env.NEXT_PUBLIC_CUSTOMER_PORTAL_ENABLED==="true"||
@@ -221,12 +221,21 @@ export default function AccountWorkspace(){
       {showEditor&&<form className="account-plan-editor" onSubmit={saveCloud}>
        <div className="account-section-head"><div><p className="overline">{editing?"Update plan":"New plan"}</p><h3>Make the numbers yours.</h3></div><button type="button" onClick={()=>setShowEditor(false)}>Cancel</button></div>
        <div className="account-field-grid">
-        <label>Financing type<select value={draft.type} onChange={e=>setDraft(p=>({...p,type:e.target.value as "personal"|"business"}))}><option value="personal">Personal</option><option value="business">Business</option></select></label>
-        <label>Purpose<input required minLength={2} maxLength={80} value={draft.purpose} onChange={e=>setDraft(p=>({...p,purpose:e.target.value}))}/></label>
+        <label>Financing type<select value={draft.type} onChange={e=>setDraft(p=>{
+          const type=e.target.value as "personal"|"business";
+          return type==="business" && p.purpose==="Home purchase & mortgage"
+            ? {...p,type,purpose:businessPurposes[0],months:36}
+            : {...p,type};
+        })}><option value="personal">Personal</option><option value="business">Business</option></select></label>
+        <label>Purpose<input required minLength={2} maxLength={80} value={draft.purpose} onChange={e=>setDraft(p=>{
+          const purpose=e.target.value;
+          const allowed=termsForPurpose(purpose);
+          return {...p,purpose,months:allowed.some(m=>m===p.months)?p.months:purpose==="Home purchase & mortgage"?240:24};
+        })}/></label>
         <label>Country<select value={draft.country} onChange={e=>setDraft(p=>({...p,country:e.target.value}))}>{countries.map(x=><option key={x.code} value={x.code}>{x.label}</option>)}</select></label>
         <label>Currency<select value={draft.currency} onChange={e=>setDraft(p=>({...p,currency:e.target.value}))}>{supportedCurrencies.map(x=><option key={x} value={x}>{x}</option>)}</select></label>
         <label>Amount<input type="number" min="500" max="10000000" step="100" required value={draft.amount} onChange={e=>setDraft(p=>({...p,amount:Number(e.target.value)}))}/></label>
-        <label>Repayment months<select value={draft.months} onChange={e=>setDraft(p=>({...p,months:Number(e.target.value)}))}>{repaymentTerms.map(x=><option key={x} value={x}>{x} months</option>)}</select></label>
+        <label>Repayment months<select value={draft.months} onChange={e=>setDraft(p=>({...p,months:Number(e.target.value)}))}>{termsForPurpose(draft.purpose).map(x=><option key={x} value={x}>{x >= 12 && x%12===0 ? `${x/12} ${x===12?"year":"years"}` : `${x} months`}</option>)}</select></label>
         <label>Assumed annual rate (%)<input type="number" min="0" max="40" step="0.25" required value={draft.annualRate} onChange={e=>setDraft(p=>({...p,annualRate:Number(e.target.value)}))}/></label>
        </div>
        <p className="account-rate-note">These are personal planning assumptions, not a quoted lending rate.</p>
